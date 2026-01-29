@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Big Catch - 디지털 낚시 복권</title>
+    <style>
+        /* 기본 스타일 및 폰트 설정 */
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0d1b2a; /* 깊은 바다색 */
+            color: white;
+            font-family: 'Noto Sans KR', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden; /* 스크롤 방지 */
+            cursor: none; /* 기본 커서 숨김 (코인 커서 사용) */
+            touch-action: none; /* 모바일 전체 스크롤 방지 */
+        }
+
+        /* 타이틀 스타일 */
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+            z-index: 10;
+            padding: 0 10px;
+            flex-shrink: 0;
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 3.5rem; /* 모바일 고려 사이즈 조정 */
+            color: #808080; /* 회색으로 변경 */
+            margin: 0;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1;
+        }
+
+        /* 복권 컨테이너 - 정사각형 & 모바일 반응형 */
+        .scratch-card-container {
+            position: relative;
+            width: 85vw; /* 모바일 화면 너비의 85% */
+            max-width: 450px; /* PC에서는 너무 커지지 않게 제한 */
+            aspect-ratio: 1 / 1; /* 정사각형 비율 강제 고정 */
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 4px solid #808080; /* 회색 테두리로 변경 */
+            user-select: none;
+            touch-action: none;
+            flex-shrink: 0; /* 레이아웃 찌그러짐 방지 */
+        }
+
+        /* 결과 이미지 (밑바탕) */
+        .result-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 정사각형 영역에 꽉 차게 (비율 유지하며 자름) */
+            /* object-fit: fill; /* 이미지를 찌그러뜨려서라도 다 보여주려면 이 주석을 해제하고 위 줄을 주석 처리하세요 */
+            display: block;
+            z-index: 1;
+        }
+
+        /* 스크래치 캔버스 (덮개) */
+        #scratchCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            cursor: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 피싱 코인 커서 스타일 수정됨 */
+        #fishingCoin {
+            position: fixed;
+            width: 60px; 
+            height: 60px;
+            /* 배경 이미지 설정 (symbol.webp) */
+            background: #ffd700 url('https://jaegyunkim.github.io/todaysfishing/symbol.webp') no-repeat center center;
+            background-size: cover; /* 이미지가 코인 안에 꽉 차도록 */
+            border-radius: 50%;
+            box-shadow: 4px 4px 10px rgba(0,0,0,0.5), inset -2px -2px 5px rgba(0,0,0,0.2);
+            border: 2px solid #808080; /* 회색 테두리로 변경 */
+            pointer-events: none; /* 클릭 통과 */
+            z-index: 9999;
+            display: block; /* flex 제거 (텍스트 없으므로) */
+            transform: translate(-50%, -50%); /* 중앙 정렬 */
+            transition: transform 0.1s ease;
+        }
+
+        /* 텍스트 제거 */
+        #fishingCoin::after {
+            content: '';
+        }
+
+        /* 긁을 때 코인 효과 */
+        body.is-scratching #fishingCoin {
+            transform: translate(-50%, -50%) scale(0.9);
+        }
+
+        /* 다시하기 버튼 */
+        .controls {
+            margin-top: 20px;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        button {
+            background-color: #808080; /* 회색 배경으로 변경 */
+            color: white; /* 텍스트는 흰색 유지 */
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px; /* 둥근 버튼 */
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        button:hover {
+            background-color: #a0a0a0; /* 호버 시 약간 밝은 회색 */
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 3rem; }
+            .scratch-card-container { width: 90vw; } /* 더 작은 화면에선 더 넓게 */
+            /* 모바일에서도 코인 커서를 보여주는 것이 '디지털 복권' 느낌을 살림 */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>THE BIG CATCH</h1>
+    </header>
+
+    <div class="scratch-card-container" id="cardContainer">
+        
+        <!-- 결과 이미지 (요청하신 URL) -->
+        <!-- object-fit: cover로 설정되어 정사각형 영역을 꽉 채웁니다 -->
+        <img src="https://jaegyunkim.github.io/todaysfishing/20260131_sea_index.png" 
+             alt="Fishing Index Result" 
+             class="result-image" 
+             id="resultImage"
+             crossorigin="anonymous"> 
+
+        <!-- 덮개 캔버스 -->
+        <canvas id="scratchCanvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <button onclick="resetScratchCard()">다시 긁기</button>
+    </div>
+
+    <!-- 커스텀 코인 커서 -->
+    <div id="fishingCoin"></div>
+
+    <script>
+        // --- 설정 변수 ---
+        const container = document.getElementById('cardContainer');
+        const canvas = document.getElementById('scratchCanvas');
+        const ctx = canvas.getContext('2d');
+        const coin = document.getElementById('fishingCoin');
+        const resultImg = document.getElementById('resultImage');
+        
+        let isDrawing = false;
+        let isRevealed = false; // 당첨(완전 공개) 여부
+
+        // --- 초기화 함수 ---
+        function initCard() {
+            // CSS로 강제된 컨테이너 크기(정사각형) 가져오기
+            const width = container.offsetWidth;
+            const height = container.offsetHeight;
+
+            // 캔버스 크기를 컨테이너 크기에 맞춤
+            canvas.width = width;
+            canvas.height = height;
+
+            // 회색 덮개 그리기
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = '#C0C0C0'; // 은색/회색
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 텍스트 추가 (긁기 유도)
+            ctx.font = 'bold 20px "Noto Sans KR"';
+            ctx.fillStyle = '#666';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('낚맛 코인으로 긁어주세요!', canvas.width / 2, canvas.height / 2);
+            
+            // 패턴 추가 (리얼함 증가)
+            addNoise();
+
+            isRevealed = false;
+        }
+
+        // --- 노이즈 패턴 추가 (복권 질감) ---
+        function addNoise() {
+            const w = canvas.width;
+            const h = canvas.height;
+            const idata = ctx.getImageData(0, 0, w, h);
+            const buffer32 = new Uint32Array(idata.data.buffer);
+            
+            for (let i = 0; i < buffer32.length; i++) {
+                if (Math.random() < 0.1) {
+                    buffer32[i] = 0xffaaaaaa; 
+                }
+            }
+            ctx.putImageData(idata, 0, 0);
+        }
+
+        // --- 스크래치 로직 ---
+        function scratch(x, y) {
+            if (isRevealed) return;
+
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            // 화면 크기에 따라 브러쉬 크기 조정 (너무 작으면 답답함)
+            const brushSize = canvas.width / 10; 
+            ctx.arc(x, y, brushSize, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 진행률 체크
+            checkScratchPercent();
+        }
+
+        // --- 진행률 확인 및 자동 공개 ---
+        function checkScratchPercent() {
+            if (Math.random() > 0.15) return; // 성능 최적화
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            let transparentPixels = 0;
+            const totalPixels = pixels.length / 4;
+
+            for (let i = 0; i < pixels.length; i += 4 * 10) {
+                if (pixels[i + 3] === 0) {
+                    transparentPixels++;
+                }
+            }
+
+            const percent = (transparentPixels * 10) / totalPixels * 100;
+
+            if (percent > 45) { // 45% 이상 긁으면
+                revealAll();
+            }
+        }
+
+        function revealAll() {
+            if(isRevealed) return;
+            isRevealed = true;
+            
+            canvas.style.transition = 'opacity 0.8s';
+            canvas.style.opacity = '0';
+            
+            setTimeout(() => {
+                // 알림창 대신 세련된 토스트 메시지나 그냥 이미지 보여주기
+                // alert("🎣 대어(The Big Catch) 낚시 성공!"); 
+                canvas.style.visibility = 'hidden';
+            }, 500);
+        }
+
+        // --- 이벤트 리스너 ---
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            // 캔버스 크기와 표시 크기가 같으므로 1:1 매핑이지만 안전하게 계산
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+
+            let clientX, clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        // 마우스
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            document.body.classList.add('is-scratching');
+            const pos = getPos(e);
+            scratch(pos.x, pos.y);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            coin.style.left = e.clientX + 'px';
+            coin.style.top = e.clientY + 'px';
+
+            if (isDrawing) {
+                const pos = getPos(e);
+                scratch(pos.x, pos.y);
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDrawing = false;
+            document.body.classList.remove('is-scratching');
+        });
+
+        // 터치 (모바일)
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isDrawing = true;
+            
+            // 터치 시작 위치로 코인 이동
+            if(e.touches[0]) {
+                coin.style.left = e.touches[0].clientX + 'px';
+                coin.style.top = e.touches[0].clientY + 'px';
+            }
+
+            const pos = getPos(e);
+            scratch(pos.x, pos.y);
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            
+            // 터치 이동 위치로 코인 이동
+            if(e.touches[0]) {
+                coin.style.left = e.touches[0].clientX + 'px';
+                coin.style.top = e.touches[0].clientY + 'px';
+            }
+
+            if (isDrawing) {
+                const pos = getPos(e);
+                scratch(pos.x, pos.y);
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', () => {
+            isDrawing = false;
+        });
+
+        // 초기화
+        resultImg.onload = function() {
+            initCard();
+        };
+
+        if (resultImg.complete) {
+            initCard();
+        } else {
+             setTimeout(() => {
+                 initCard();
+             }, 300);
+        }
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                // 리사이즈 시 초기화 (반응형 대응)
+                if (!isRevealed) {
+                    initCard(); 
+                }
+            }, 200);
+        });
+
+        window.resetScratchCard = function() {
+            canvas.style.opacity = '1';
+            canvas.style.visibility = 'visible';
+            canvas.style.transition = 'none';
+            initCard();
+        };
+
+    </script>
+</body>
+</html>
