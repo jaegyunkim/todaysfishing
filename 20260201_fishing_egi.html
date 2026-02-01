@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>에깅 낚시 출조 준비</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            touch-action: none; /* Prevent scroll while dragging on mobile */
+            overscroll-behavior: none;
+            background-color: #f1f5f9; /* Slate-100 */
+        }
+
+        /* Mobile Container Simulation */
+        .app-container {
+            width: 100%;
+            height: 100vh; /* Fallback */
+            height: 100dvh; /* Dynamic viewport height */
+            max-width: 480px; /* Limit width to simulate mobile on desktop */
+            margin: 0 auto;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .draggable-item {
+            cursor: grab;
+            transition: transform 0.1s;
+            touch-action: none;
+            /* Prevent select */
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .draggable-item:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+            z-index: 50;
+        }
+
+        .drop-zone {
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.drag-over {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.5));
+        }
+
+        .drop-zone.error {
+            animation: shake 0.5s;
+            filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.5));
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-select: none;
+            pointer-events: none; /* Crucial for touch events passing through */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="w-full bg-blue-600 text-white p-3 shrink-0 relative flex items-center justify-end z-20 shadow-sm">
+            <h1 class="text-lg font-bold absolute left-1/2 transform -translate-x-1/2">에깅 출조 준비</h1>
+            <div class="bg-blue-700 px-3 py-1 rounded-full relative z-10">
+                <span id="score-board" class="font-bold text-lg">0 / 5</span>
+            </div>
+        </header>
+
+        <!-- Main Content (Vertical Flex) -->
+        <main class="flex-1 flex flex-col w-full overflow-hidden relative">
+            
+            <!-- Top: Bag Area (Fixed height portion) -->
+            <!-- Modified: Added background image style and styling for contrast -->
+            <div class="w-full h-[40%] flex flex-col items-center justify-center p-4 relative shrink-0 border-b border-blue-100 bg-cover bg-center bg-no-repeat"
+                 style="background-image: url('https://jaegyunkim.github.io/todaysfishing/20260201_egi_background.png');">
+                
+                <div class="absolute top-2 left-1/2 transform -translate-x-1/2 bg-white/90 px-3 py-1 rounded-full text-xs font-bold text-slate-600 border border-slate-200 shadow-sm z-10">
+                    여기로 드래그하세요!
+                </div>
+                
+                <!-- Modified: Changed to rounded rectangle (rounded-3xl) and added subtle box styling -->
+                <div id="drop-zone" class="drop-zone w-48 h-48 sm:w-56 sm:h-56 relative flex items-center justify-center p-4 bg-white/20 backdrop-blur-sm border border-white/40 rounded-3xl shadow-lg">
+                    <img id="bag-img" 
+                         src="https://jaegyunkim.github.io/todaysfishing/20260201_egi_empty.png" 
+                         alt="낚시 가방" 
+                         class="w-full h-full object-contain drop-shadow-md">
+                </div>
+                
+                <!-- Modified: Text styling for readability on background image -->
+                <p class="mt-2 text-sm font-bold text-white drop-shadow-md bg-black/20 px-3 py-1 rounded-full backdrop-blur-sm" id="bag-status-text">빈 가방</p>
+            </div>
+
+            <!-- Bottom: Item List (Scrollable if needed, Grid 2 cols) -->
+            <div class="w-full h-[60%] bg-white p-3 flex flex-col relative z-10">
+                <h2 class="text-xs sm:text-sm font-bold mb-2 text-slate-700 flex items-center shrink-0 leading-tight">
+                    <svg class="w-4 h-4 mr-2 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    무늬 오징어 만나기 전, 가방 속에 쏙쏙! (5개 넣기)
+                </h2>
+                
+                <!-- Grid: 4 Columns (Modified) -->
+                <div class="overflow-y-auto flex-1 pr-1">
+                    <div id="item-grid" class="grid grid-cols-4 gap-2 pb-20">
+                        <!-- Items injected here -->
+                    </div>
+                </div>
+                
+                <!-- Helper text at bottom -->
+                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-white via-white to-transparent h-8 pointer-events-none"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 hidden backdrop-blur-sm">
+        <div class="bg-white rounded-2xl p-6 w-4/5 max-w-sm text-center shadow-2xl transform transition-all scale-95 opacity-0" id="modal-content">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h2 class="text-xl font-bold text-slate-800 mb-2">출조 준비 완료!</h2>
+            <p class="text-sm text-slate-600 mb-5">필수 장비 5개를 모두 챙겼습니다.<br>만쿨 하세요!</p>
+            <button onclick="resetGame()" class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 px-4 rounded-xl transition duration-200 shadow-lg touch-manipulation">
+                다시 하기
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- Game Data ---
+        const GAME_CONFIG = {
+            targetGenre: 'eging',
+            requiredCount: 5,
+            bagImages: {
+                empty: 'https://jaegyunkim.github.io/todaysfishing/20260201_egi_empty.png',
+                full: 'https://jaegyunkim.github.io/todaysfishing/20260201_egi_full.png'
+            }
+        };
+
+        const itemsData = [
+            // Correct Items (Eging)
+            { id: 1, name: "에기", type: "eging", img: "https://jaegyunkim.github.io/todaysfishing/20260201_egi.png" },
+            { id: 2, name: "쇼크리더", type: "eging", img: "https://jaegyunkim.github.io/todaysfishing/20260201_shock.png" },
+            { id: 3, name: "에깅 스냅", type: "eging", img: "https://jaegyunkim.github.io/todaysfishing/20260201_snap.png" },
+            { id: 4, name: "시메칼", type: "eging", img: "https://jaegyunkim.github.io/todaysfishing/20260201_shime.png" },
+            { id: 5, name: "축광기", type: "eging", img: "https://jaegyunkim.github.io/todaysfishing/20260201_uv.png" },
+            // Incorrect Items
+            { id: 6, name: "묶음추", type: "wrong", img: "https://jaegyunkim.github.io/todaysfishing/20260201_sinker.png" },
+            { id: 7, name: "구멍찌", type: "wrong", img: "https://jaegyunkim.github.io/todaysfishing/20260201_hole.png" },
+            { id: 8, name: "메탈지그", type: "wrong", img: "https://jaegyunkim.github.io/todaysfishing/20260201_jig.png" }
+        ];
+
+        // --- State ---
+        let currentScore = 0;
+        let activeDragItem = null;
+        let touchStartPos = { x: 0, y: 0 };
+        let itemStartPos = { x: 0, y: 0 }; // For JS animation fallback
+
+        // --- DOM Elements ---
+        const itemGrid = document.getElementById('item-grid');
+        const dropZone = document.getElementById('drop-zone');
+        const bagImg = document.getElementById('bag-img');
+        const scoreBoard = document.getElementById('score-board');
+        const bagStatusText = document.getElementById('bag-status-text');
+        const modal = document.getElementById('success-modal');
+        const modalContent = document.getElementById('modal-content');
+
+        // --- Initialization ---
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function initGame() {
+            currentScore = 0;
+            scoreBoard.textContent = `0 / ${GAME_CONFIG.requiredCount}`;
+            bagImg.src = GAME_CONFIG.bagImages.empty;
+            bagStatusText.textContent = "빈 가방";
+            itemGrid.innerHTML = '';
+            modal.classList.add('hidden');
+            dropZone.classList.remove('error', 'drag-over');
+
+            const shuffledItems = shuffle([...itemsData]);
+
+            shuffledItems.forEach(item => {
+                const itemEl = document.createElement('div');
+                // Modified: Adjusted height (h-28 -> h-24), padding (p-2 -> p-1), and font sizes for 4-column layout
+                itemEl.className = 'draggable-item bg-slate-50 border border-slate-200 rounded-lg p-1 flex flex-col items-center justify-center shadow-sm relative h-24 active:shadow-lg active:border-blue-400 active:bg-blue-50';
+                itemEl.setAttribute('draggable', 'true'); // For desktop mouse
+                itemEl.dataset.type = item.type;
+                itemEl.dataset.id = item.id;
+                
+                // Modified: Image height (h-16 -> h-14) and font size (text-xs -> text-[10px])
+                itemEl.innerHTML = `
+                    <div class="w-full h-14 flex items-center justify-center mb-1">
+                        <img src="${item.img}" alt="${item.name}" class="max-h-full max-w-full object-contain pointer-events-none">
+                    </div>
+                    <span class="text-[10px] sm:text-xs font-bold text-slate-700 text-center w-full truncate bg-white/50 rounded px-1">${item.name}</span>
+                `;
+
+                // Add Event Listeners
+                addDragEvents(itemEl);
+                itemGrid.appendChild(itemEl);
+            });
+        }
+
+        // --- Logic ---
+
+        function handleCorrectDrop(itemElement) {
+            // Visual feedback
+            itemElement.style.transition = "all 0.4s ease";
+            itemElement.style.transform = "scale(0) rotate(180deg)";
+            itemElement.style.opacity = "0";
+
+            setTimeout(() => {
+                itemElement.remove(); // Actually remove from DOM
+            }, 400);
+
+            // Update State
+            currentScore++;
+            scoreBoard.textContent = `${currentScore} / ${GAME_CONFIG.requiredCount}`;
+            
+            // Bag animation
+            dropZone.classList.add('drag-over');
+            setTimeout(() => dropZone.classList.remove('drag-over'), 200);
+
+            // Check Win
+            if (currentScore === GAME_CONFIG.requiredCount) {
+                setTimeout(gameWin, 500);
+            }
+        }
+
+        function handleWrongDrop(itemElement) {
+            // Shake bag
+            dropZone.classList.add('error');
+            setTimeout(() => dropZone.classList.remove('error'), 500);
+
+            // Return item to original place
+            resetItemPosition(itemElement);
+        }
+
+        function gameWin() {
+            bagImg.src = GAME_CONFIG.bagImages.full;
+            bagStatusText.textContent = "출조 준비 완료!";
+            bagStatusText.className = "mt-2 text-center text-blue-600 font-bold";
+            
+            // Show Modal
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('opacity-0', 'scale-95');
+                modalContent.classList.add('opacity-100', 'scale-100');
+            }, 10);
+            
+            launchConfetti();
+        }
+
+        function resetGame() {
+            modalContent.classList.remove('opacity-100', 'scale-100');
+            modalContent.classList.add('opacity-0', 'scale-95');
+            setTimeout(initGame, 200);
+        }
+
+        // --- Input Handling (Mouse & Touch) ---
+
+        function addDragEvents(el) {
+            // Mouse Drag (Desktop)
+            el.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', JSON.stringify({
+                    type: el.dataset.type,
+                    id: el.dataset.id
+                }));
+                // Delay adding class to avoid hiding the drag ghost immediately
+                setTimeout(() => el.classList.add('opacity-20'), 0);
+            });
+
+            el.addEventListener('dragend', (e) => {
+                el.classList.remove('opacity-20');
+            });
+
+            // Touch Events (Mobile) - Custom Implementation
+            el.addEventListener('touchstart', handleTouchStart, { passive: false });
+            el.addEventListener('touchmove', handleTouchMove, { passive: false });
+            el.addEventListener('touchend', handleTouchEnd, { passive: false });
+        }
+
+        // Drop Zone Events (Mouse)
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('scale-105');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            dropZone.classList.remove('scale-105');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('scale-105');
+            
+            try {
+                const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                const itemElement = document.querySelector(`.draggable-item[data-id="${data.id}"]`);
+                if(itemElement) {
+                    if (data.type === GAME_CONFIG.targetGenre) {
+                        handleCorrectDrop(itemElement);
+                    } else {
+                        handleWrongDrop(itemElement);
+                    }
+                }
+            } catch (err) {
+                console.error("Drop error", err);
+            }
+        });
+
+        // Touch Handlers
+        let originalZIndex = '';
+
+        function handleTouchStart(e) {
+            // e.preventDefault(); // Remove to allow click, but we want drag. 
+            // In a game, preventing default prevents scrolling which is desired for the drag item.
+            if(e.cancelable) e.preventDefault();
+
+            activeDragItem = e.currentTarget;
+            const touch = e.touches[0];
+            
+            touchStartPos.x = touch.clientX;
+            touchStartPos.y = touch.clientY;
+            
+            originalZIndex = activeDragItem.style.zIndex;
+            activeDragItem.style.zIndex = 9999;
+            activeDragItem.style.transition = 'none'; // Instant follow
+            activeDragItem.classList.add('shadow-xl', 'scale-105');
+        }
+
+        function handleTouchMove(e) {
+            if (!activeDragItem) return;
+            if(e.cancelable) e.preventDefault(); // Stop scrolling completely while dragging
+            
+            const touch = e.touches[0];
+            const dx = touch.clientX - touchStartPos.x;
+            const dy = touch.clientY - touchStartPos.y;
+            
+            activeDragItem.style.transform = `translate(${dx}px, ${dy}px) scale(1.1)`;
+        }
+
+        function handleTouchEnd(e) {
+            if (!activeDragItem) return;
+            
+            const touch = e.changedTouches[0];
+            const dropRect = dropZone.getBoundingClientRect();
+            
+            // Detection: center of the touch interaction
+            const x = touch.clientX;
+            const y = touch.clientY;
+
+            // Check overlap
+            if (
+                x >= dropRect.left &&
+                x <= dropRect.right &&
+                y >= dropRect.top &&
+                y <= dropRect.bottom
+            ) {
+                if (activeDragItem.dataset.type === GAME_CONFIG.targetGenre) {
+                    handleCorrectDrop(activeDragItem);
+                } else {
+                    handleWrongDrop(activeDragItem);
+                }
+            } else {
+                resetItemPosition(activeDragItem);
+            }
+
+            // Cleanup styles
+            activeDragItem.style.zIndex = originalZIndex;
+            activeDragItem.classList.remove('shadow-xl', 'scale-105');
+            activeDragItem = null;
+        }
+
+        function resetItemPosition(el) {
+            el.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            el.style.transform = 'translate(0, 0)';
+        }
+
+        // --- Simple Confetti Effect ---
+        function launchConfetti() {
+            const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+            const container = document.querySelector('.app-container');
+            
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.style.position = 'absolute';
+                conf.style.left = '50%';
+                conf.style.top = '40%'; // Start from bag area
+                conf.style.width = '8px';
+                conf.style.height = '8px';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.zIndex = 100;
+                conf.style.borderRadius = '50%';
+                container.appendChild(conf);
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = 4 + Math.random() * 8;
+                const vx = Math.cos(angle) * velocity;
+                const vy = Math.sin(angle) * velocity;
+
+                let x = 0, y = 0;
+                let opacity = 1;
+
+                const anim = setInterval(() => {
+                    x += vx;
+                    y += vy + 0.5; // lighter gravity
+                    opacity -= 0.015;
+                    conf.style.transform = `translate(${x}px, ${y}px)`;
+                    conf.style.opacity = opacity;
+
+                    if(opacity <= 0) {
+                        clearInterval(anim);
+                        conf.remove();
+                    }
+                }, 16);
+            }
+        }
+
+        // Initialize on Load
+        window.addEventListener('load', initGame);
+
+    </script>
+</body>
+</html>
