@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>낚시 연결 대작전</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap');
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #ffffff;
+            font-family: 'Jua', sans-serif;
+            touch-action: none; /* 모바일 스크롤 방지 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .header {
+            /* 우측 상단 정렬 스타일 변경 */
+            position: absolute;
+            top: 20px; /* 스테이지 정보와 높이 맞춤 */
+            right: 20px; /* 우측 정렬 */
+            left: auto;
+            text-align: right;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1); 
+            margin-top: 0; 
+            pointer-events: none; /* 클릭 통과 */
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.5rem; /* 스테이지 크기와 동일하게 유지 */
+            color: #000000; 
+            font-family: 'Nanum Gothic', sans-serif; 
+            font-weight: 800; 
+        }
+
+        /* 스테이지 표시 좌측 상단 배치 스타일 */
+        #stage-info {
+            position: absolute;
+            top: 20px;
+            left: 20px; 
+            margin: 0;
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: bold;
+            z-index: 100;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+            /* footer는 하단 고정을 위해 margin-top auto 등 필요할 수 있으나 flex 구조라 유지 */
+            margin-top: auto; 
+        }
+
+        #gameCanvas {
+            background: #ffffff;
+            border-radius: 20px;
+            border: 2px solid #eee;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            cursor: crosshair;
+        }
+
+        /* 팝업 스타일 */
+        #modal {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            pointer-events: auto;
+            min-width: 300px;
+            z-index: 20;
+            border: 1px solid #ddd;
+        }
+
+        #modal h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Jua', sans-serif;
+            transition: transform 0.1s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* 하단 버튼 그룹 스타일 */
+        .bottom-buttons {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px; /* 버튼 사이 간격 */
+            pointer-events: auto;
+        }
+
+        .bottom-buttons button {
+            background: #555;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 20px;
+        }
+        
+        /* 다시하기 버튼은 조금 다른 색상으로 구분 */
+        #retry-btn {
+            background: #2ed573;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading" class="loading">리소스 로딩중...</div>
+
+    <div id="ui-layer">
+        <!-- 스테이지 정보 (좌측 상단) -->
+        <h2 id="stage-info">Stage 1/5</h2>
+
+        <div class="bottom-buttons">
+            <button id="retry-btn" onclick="retryStage()">다시하기</button>
+        </div>
+        
+        <!-- 헤드라인 (우측 상단으로 이동됨) -->
+        <div class="header">
+            <h1 id="stage-title">에깅</h1>
+        </div>
+
+        <div class="footer">
+            선이 겹치지 않게 같은색을 연결하세요
+        </div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="modal">
+        <h2 id="modal-title">스테이지 클리어!</h2>
+        <button id="next-btn" onclick="nextStage()">다음 단계로</button>
+    </div>
+
+<script>
+    /**
+     * 게임 설정 및 데이터
+     */
+    const COLORS = {
+        red: '#FF4757',
+        orange: '#FFA502',
+        blue: '#1E90FF',
+        green: '#2ED573'
+    };
+
+    // 공통 아이콘 (슬링백)
+    const SLINGBAGS = {
+        red: 'https://jaegyunkim.github.io/todaysfishing/red_slingback.png',
+        orange: 'https://jaegyunkim.github.io/todaysfishing/orange_slingback.png',
+        blue: 'https://jaegyunkim.github.io/todaysfishing/blue_slingback.png',
+        green: 'https://jaegyunkim.github.io/todaysfishing/green_slingback.png'
+    };
+
+    // 스테이지별 데이터
+    const STAGES = [
+        {
+            title: "에깅",
+            items: {
+                red: 'https://jaegyunkim.github.io/todaysfishing/red_egi.png',
+                orange: 'https://jaegyunkim.github.io/todaysfishing/orange_egi.png',
+                blue: 'https://jaegyunkim.github.io/todaysfishing/blue_egi.png',
+                green: 'https://jaegyunkim.github.io/todaysfishing/green_egi.png'
+            }
+        },
+        {
+            title: "선상 다운샷",
+            items: {
+                red: 'https://jaegyunkim.github.io/todaysfishing/red_sinker.png',
+                orange: 'https://jaegyunkim.github.io/todaysfishing/orange_sinker.png',
+                blue: 'https://jaegyunkim.github.io/todaysfishing/blue_sinker.png',
+                green: 'https://jaegyunkim.github.io/todaysfishing/green_sinker.png'
+            }
+        },
+        {
+            title: "방파제 아징",
+            items: {
+                red: 'https://jaegyunkim.github.io/todaysfishing/red_ajing.png',
+                orange: 'https://jaegyunkim.github.io/todaysfishing/orange_ajing.png',
+                blue: 'https://jaegyunkim.github.io/todaysfishing/blue_ajing.png',
+                green: 'https://jaegyunkim.github.io/todaysfishing/green_ajing.png'
+            }
+        },
+        {
+            title: "갯바위 돌돔 원투",
+            items: {
+                red: 'https://jaegyunkim.github.io/todaysfishing/red_screw.png',
+                orange: 'https://jaegyunkim.github.io/todaysfishing/orange_screw.png',
+                blue: 'https://jaegyunkim.github.io/todaysfishing/blue_screw.png',
+                green: 'https://jaegyunkim.github.io/todaysfishing/green_screw.png'
+            }
+        },
+        {
+            title: "민물 배스 루어",
+            items: {
+                red: 'https://jaegyunkim.github.io/todaysfishing/red_grip.png',
+                orange: 'https://jaegyunkim.github.io/todaysfishing/orange_grip.png',
+                blue: 'https://jaegyunkim.github.io/todaysfishing/blue_grip.png',
+                green: 'https://jaegyunkim.github.io/todaysfishing/green_grip.png'
+            }
+        }
+    ];
+
+    /**
+     * 게임 엔진 변수
+     */
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    let currentStageIndex = 0;
+    let nodes = []; // { x, y, color, type, img, connected }
+    let paths = []; // { color, points: [{x,y},...] }
+    let activePath = null; // 현재 그리는 중인 경로
+    let isDragging = false;
+    let startNode = null;
+    let loadedImages = {}; // 이미지 캐싱
+
+    // 원형 반지름 대신 사각형 크기 정의 (크기 1/2로 축소)
+    const NODE_SIZE = 40; // 사각형의 너비/높이 (기존 70 -> 40)
+    const HALF_SIZE = NODE_SIZE / 2;
+    const LINE_WIDTH = 6; // 선 두께 (기존 12 -> 6)
+
+    /**
+     * 초기화 및 이벤트 리스너
+     */
+    function init() {
+        resizeCanvas();
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            resetStage(); // 리사이즈 시 위치 재계산 필요
+        });
+
+        // 마우스 이벤트
+        canvas.addEventListener('mousedown', handleStart);
+        canvas.addEventListener('mousemove', handleMove);
+        canvas.addEventListener('mouseup', handleEnd);
+        
+        // 터치 이벤트
+        canvas.addEventListener('touchstart', (e) => handleStart(e.touches[0]));
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault(); 
+            handleMove(e.touches[0]);
+        });
+        canvas.addEventListener('touchend', handleEnd);
+
+        loadStage(0);
+        
+        // 게임 루프 시작
+        requestAnimationFrame(gameLoop);
+    }
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    /**
+     * 스테이지 로드
+     */
+    async function loadStage(index) {
+        document.getElementById('loading').style.display = 'block';
+        
+        if(index >= STAGES.length) index = 0; // 루프 방지용 (안전장치)
+        currentStageIndex = index;
+
+        // UI 업데이트
+        document.getElementById('stage-info').innerText = `Stage ${index + 1} / 5`;
+        document.getElementById('stage-title').innerText = STAGES[index].title;
+        document.getElementById('modal').style.display = 'none';
+
+        // 이미지 로드
+        await preloadImages(index);
+        
+        resetStage();
+        document.getElementById('loading').style.display = 'none';
+    }
+
+    function preloadImages(stageIdx) {
+        const promises = [];
+        const stageData = STAGES[stageIdx];
+        const colors = Object.keys(COLORS);
+
+        colors.forEach(color => {
+            // 슬링백 로드
+            const p1 = new Promise(resolve => {
+                const img = new Image();
+                img.src = SLINGBAGS[color];
+                img.onload = () => resolve({key: `bag_${color}`, img: img});
+                img.onerror = () => resolve({key: `bag_${color}`, img: null}); // 에러시에도 진행
+            });
+            promises.push(p1);
+
+            // 장비 로드
+            const p2 = new Promise(resolve => {
+                const img = new Image();
+                img.src = stageData.items[color];
+                img.onload = () => resolve({key: `gear_${color}`, img: img});
+                img.onerror = () => resolve({key: `gear_${color}`, img: null});
+            });
+            promises.push(p2);
+        });
+
+        return Promise.all(promises).then(results => {
+            results.forEach(res => {
+                if(res.img) loadedImages[res.key] = res.img;
+            });
+        });
+    }
+
+    /**
+     * 스테이지 배치 (노드 생성)
+     */
+    function resetStage() {
+        nodes = [];
+        paths = [];
+        activePath = null;
+        isDragging = false;
+        startNode = null;
+
+        const colorKeys = Object.keys(COLORS); // ['red', 'orange', 'blue', 'green']
+        const count = colorKeys.length; // 4개
+        const margin = 80;
+        const w = canvas.width;
+        const h = canvas.height;
+        const spacing = (h - margin * 2) / count;
+
+        // 1. 각 행(Row)의 Y 좌표 생성
+        let rowY = [];
+        for(let i=0; i<count; i++) {
+            rowY.push(margin + i * spacing + spacing/2);
+        }
+
+        // 2. 왼쪽 열 색상 랜덤 섞기
+        let leftColors = [...colorKeys];
+        leftColors.sort(() => Math.random() - 0.5);
+
+        // 3. 오른쪽 열 색상 랜덤 섞기 (일직선 금지 조건)
+        let rightColors = [...colorKeys];
+        let validArrangement = false;
+
+        // 같은 행에 같은 색이 없을 때까지 반복 (Derangement)
+        while(!validArrangement) {
+            rightColors.sort(() => Math.random() - 0.5);
+            validArrangement = true;
+            for(let i=0; i<count; i++) {
+                if(leftColors[i] === rightColors[i]) {
+                    validArrangement = false;
+                    break;
+                }
+            }
+        }
+
+        // 4. 노드 생성
+        for(let i=0; i<count; i++) {
+            // 왼쪽 노드 (슬링백)
+            const cLeft = leftColors[i];
+            nodes.push({
+                id: `bag_${cLeft}`,
+                color: cLeft,
+                type: 'bag',
+                x: w * 0.2 + 20, // 오른쪽으로 10px 더 이동 (총 20px)
+                y: rowY[i],
+                imgKey: `bag_${cLeft}`,
+                connected: false
+            });
+
+            // 오른쪽 노드 (장비)
+            const cRight = rightColors[i];
+            nodes.push({
+                id: `gear_${cRight}`,
+                color: cRight,
+                type: 'gear',
+                x: w * 0.8 - 20, // 왼쪽으로 10px 더 이동 (총 20px)
+                y: rowY[i],
+                imgKey: `gear_${cRight}`,
+                connected: false
+            });
+        }
+    }
+
+    /**
+     * 입력 처리
+     */
+    function getPointerPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        };
+    }
+
+    // 사각형 영역 충돌 체크 헬퍼 함수
+    function isInsideNode(x, y, node) {
+        return x >= node.x - HALF_SIZE && 
+               x <= node.x + HALF_SIZE && 
+               y >= node.y - HALF_SIZE && 
+               y <= node.y + HALF_SIZE;
+    }
+
+    function handleStart(e) {
+        const pos = getPointerPos(e);
+        
+        // 노드 클릭 확인 (사각형 영역)
+        const clickedNode = nodes.find(n => isInsideNode(pos.x, pos.y, n));
+
+        if (clickedNode) {
+            // 이미 연결된 노드라면 기존 연결 끊기
+            if (clickedNode.connected) {
+                removePathWithNode(clickedNode);
+            }
+
+            isDragging = true;
+            startNode = clickedNode;
+            activePath = {
+                color: clickedNode.color,
+                points: [{x: startNode.x, y: startNode.y}, {x: pos.x, y: pos.y}]
+            };
+        }
+    }
+
+    function handleMove(e) {
+        if (!isDragging || !activePath) return;
+        const pos = getPointerPos(e);
+        
+        // 점 추가 (너무 많이 추가되지 않게 거리 체크)
+        const lastPoint = activePath.points[activePath.points.length - 1];
+        if (dist(pos.x, pos.y, lastPoint.x, lastPoint.y) > 10) {
+            activePath.points.push({x: pos.x, y: pos.y});
+            
+            // 충돌 체크 (다른 색 선과 닿으면 기존 선 삭제)
+            checkCollisionAndCut(pos);
+        }
+    }
+
+    function handleEnd(e) {
+        if (!isDragging) return;
+        
+        // 마지막 위치가 다른 노드 위인지 확인
+        const lastPoint = activePath.points[activePath.points.length - 1];
+        const targetNode = nodes.find(n => isInsideNode(lastPoint.x, lastPoint.y, n));
+
+        let validConnection = false;
+
+        if (targetNode) {
+            // 조건: 같은 색깔, 다른 타입(가방<->장비), 시작노드 아님
+            if (targetNode.color === startNode.color && 
+                targetNode.id !== startNode.id) {
+                
+                // 성공적 연결
+                activePath.points.push({x: targetNode.x, y: targetNode.y}); // 끝점 스냅
+                paths.push(activePath);
+                
+                startNode.connected = true;
+                targetNode.connected = true;
+                validConnection = true;
+
+                // 승리 조건 체크
+                checkWinCondition();
+            }
+        }
+
+        isDragging = false;
+        activePath = null;
+        startNode = null;
+    }
+
+    /**
+     * 로직 헬퍼
+     */
+    function dist(x1, y1, x2, y2) {
+        return Math.sqrt((x1-x2)**2 + (y1-y2)**2);
+    }
+
+    function removePathWithNode(node) {
+        // 이 노드를 포함하는 경로 찾기
+        const pathIdx = paths.findIndex(p => p.color === node.color);
+        if (pathIdx !== -1) {
+            paths.splice(pathIdx, 1);
+            // 해당 색상의 모든 노드 연결 해제
+            nodes.filter(n => n.color === node.color).forEach(n => n.connected = false);
+        }
+    }
+
+    // 선끼리 교차 판정
+    function checkCollisionAndCut(currentPos) {
+        // 현재 그리는 선의 색과 다른 색을 가진 기존 경로들 검사
+        for (let i = paths.length - 1; i >= 0; i--) {
+            const p = paths[i];
+            if (p.color === activePath.color) continue; // 같은 색은 통과
+
+            // 기존 경로의 모든 점들과 현재 점의 거리 비교
+            for (let pt of p.points) {
+                if (dist(currentPos.x, currentPos.y, pt.x, pt.y) < LINE_WIDTH) {
+                    // 충돌! 기존 경로 삭제
+                    nodes.filter(n => n.color === p.color).forEach(n => n.connected = false);
+                    paths.splice(i, 1);
+                    break; 
+                }
+            }
+        }
+    }
+
+    function checkWinCondition() {
+        const connectedCount = nodes.filter(n => n.connected).length;
+        if (connectedCount === nodes.length) { // 동적으로 전체 노드 수(8개)와 비교
+            setTimeout(() => {
+                showModal();
+            }, 300);
+        }
+    }
+    
+    // 현재 단계 다시하기 (배치 새로 섞기)
+    function retryStage() {
+        // 배치를 새로 섞고 상태 초기화
+        resetStage();
+        
+        // 모달 닫기
+        document.getElementById('modal').style.display = 'none';
+    }
+
+    /**
+     * 렌더링
+     */
+    function gameLoop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 1. 기존 경로 그리기
+        paths.forEach(path => drawPath(path));
+
+        // 2. 현재 그리는 경로 그리기
+        if (activePath) {
+            drawPath(activePath);
+        }
+
+        // 3. 노드 그리기
+        nodes.forEach(node => {
+            drawNode(node);
+        });
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    function drawPath(path) {
+        if (path.points.length < 2) return;
+        
+        ctx.beginPath();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = LINE_WIDTH;
+        ctx.strokeStyle = COLORS[path.color];
+        
+        // 그림자 효과
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = COLORS[path.color];
+
+        ctx.moveTo(path.points[0].x, path.points[0].y);
+        for (let i = 1; i < path.points.length; i++) {
+             ctx.lineTo(path.points[i].x, path.points[i].y);
+        }
+        ctx.stroke();
+        
+        // 그림자 초기화
+        ctx.shadowBlur = 0;
+    }
+
+    // 둥근 사각형 그리기 헬퍼
+    function roundedRect(ctx, x, y, width, height, radius) {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+    }
+
+    function drawNode(node) {
+        const x = node.x - HALF_SIZE;
+        const y = node.y - HALF_SIZE;
+        const radius = 10; // 모서리 둥글기 (기존 15 -> 10)
+
+        // 노드 배경 (둥근 사각형)
+        roundedRect(ctx, x, y, NODE_SIZE, NODE_SIZE, radius);
+        ctx.fillStyle = '#f0f0f0';
+        ctx.fill();
+        
+        // 테두리 (색상별)
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = COLORS[node.color];
+        if (node.connected) {
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = COLORS[node.color];
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // 아이콘 이미지 그리기
+        const img = loadedImages[node.imgKey];
+        if (img) {
+            // 이미지 비율 유지하면서 사각형 안에 맞추기 (약간의 여백 둠)
+            const imgSize = NODE_SIZE * 0.8;
+            const imgOffset = (NODE_SIZE - imgSize) / 2;
+            ctx.drawImage(img, x + imgOffset, y + imgOffset, imgSize, imgSize);
+        }
+    }
+
+    /**
+     * UI 제어
+     */
+    function showModal() {
+        const modal = document.getElementById('modal');
+        const title = document.getElementById('modal-title');
+        const btn = document.getElementById('next-btn');
+        
+        modal.style.display = 'block';
+        
+        if (currentStageIndex === 4) { // 마지막 스테이지
+            title.innerText = "모든 스테이지 클리어!";
+            btn.innerText = "처음부터 다시하기";
+            btn.onclick = () => {
+                location.reload();
+            };
+        } else {
+            title.innerText = "스테이지 클리어!";
+            btn.innerText = "다음 단계로";
+            btn.onclick = nextStage;
+        }
+    }
+
+    function nextStage() {
+        if (currentStageIndex < 4) {
+            loadStage(currentStageIndex + 1);
+        } else {
+            // 다시하기
+            loadStage(0);
+        }
+    }
+
+    // 게임 시작
+    window.onload = init;
+
+</script>
+</body>
+</html>
