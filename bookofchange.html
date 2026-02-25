@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>조운역해 (釣運易解)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap');
+        body {
+            font-family: 'Noto Serif KR', serif;
+            background-color: #f3f4f6;
+            background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+        }
+        .gua-symbol {
+            font-size: 3rem;
+            line-height: 1;
+            letter-spacing: 0.2rem;
+            color: #1e3a8a;
+        }
+        .casting-animation {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col">
+
+    <header class="bg-blue-900 text-white p-6 shadow-md text-center">
+        <h1 class="text-3xl font-bold mb-2">🌊 조운역해 (釣運易解) 🎣</h1>
+        <p class="text-sm text-blue-200">하늘의 뜻을 읽고, 물의 흐름을 낚다</p>
+    </header>
+
+    <main class="flex-grow max-w-lg w-full mx-auto p-4 sm:p-6 mt-4">
+        
+        <!-- 피싱픽 안내 문구 -->
+        <p class="text-[11px] sm:text-sm font-bold italic text-center text-blue-800 mb-4 whitespace-nowrap tracking-tighter sm:tracking-normal">
+            수 천개의 장비 중, 당신에게 맞는 건 단 하나. AI 기반 1:1 장비 큐레이션 피싱픽
+        </p>
+
+        <!-- 입력 폼 -->
+        <div id="input-section" class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-blue-900">
+            <h2 class="text-sm sm:text-base font-bold mb-6 text-center text-gray-700">기분 좋은 손맛을 위해 출조 정보를 입력해 주세요.</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">출조 일자</label>
+                    <input type="date" id="fishing-date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">낚시 장르</label>
+                    <select id="fishing-genre" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-transparent" onchange="updateRegions()">
+                        <option value="">장르를 선택하세요</option>
+                        <optgroup label="바다 낚시">
+                            <option value="갯바위 낚시">갯바위 낚시</option>
+                            <option value="방파제 낚시">방파제 낚시</option>
+                            <option value="선상 낚시">선상 낚시</option>
+                            <option value="원투 낚시">원투 낚시</option>
+                            <option value="에깅 (Eging)">에깅 (Eging)</option>
+                            <option value="지깅 (Jigging)">지깅 (Jigging)</option>
+                            <option value="타이라바">타이라바</option>
+                            <option value="쇼어 지깅">쇼어 지깅</option>
+                            <option value="농어/볼락/광어 루어">농어/볼락/광어 루어</option>
+                        </optgroup>
+                        <optgroup label="민물 낚시">
+                            <option value="붕어 낚시">붕어 낚시</option>
+                            <option value="바닥 낚시">바닥 낚시</option>
+                            <option value="중층/내림 낚시">중층/내림 낚시</option>
+                            <option value="잉어/장어 원투 낚시">잉어/장어 원투 낚시</option>
+                            <option value="배스 루어">배스 루어</option>
+                            <option value="쏘가리 루어">쏘가리 루어</option>
+                            <option value="계류 루어 (송어/산천어/꺽지)">계류 루어 (송어/산천어/꺽지)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">출조 지역</label>
+                    <select id="fishing-region" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-transparent">
+                        <option value="">먼저 장르를 선택하세요</option>
+                    </select>
+                </div>
+
+                <div class="pt-4">
+                    <button id="cast-btn" class="w-full bg-blue-900 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-800 transition duration-300 transform active:scale-95 text-lg" onclick="castDivination()">
+                        🙏 주역 점괘 뽑기 (캐스팅)
+                    </button>
+                    <p class="text-xs text-center text-gray-500 mt-2">마음을 비우고 대상어를 떠올리며 누르십시오.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 로딩 애니메이션 -->
+        <div id="loading-section" class="hidden text-center py-12">
+            <div class="text-6xl mb-4 casting-animation">🎣</div>
+            <h3 class="text-xl font-bold text-gray-700">주역의 64괘를 수면 위에 띄우는 중...</h3>
+            <p class="text-gray-500 mt-2">풍수지리와 조류의 흐름을 읽고 있습니다.</p>
+        </div>
+
+        <!-- 결과 화면 -->
+        <div id="result-section" class="hidden bg-white rounded-2xl shadow-xl border-t-4 border-blue-900 overflow-hidden fade-in">
+            <!-- 점괘 헤더 -->
+            <div class="bg-gray-50 p-6 text-center border-b border-gray-200">
+                <div id="gua-symbol" class="gua-symbol mb-2 font-black">䷀</div>
+                <h2 id="gua-name" class="text-2xl font-bold text-gray-800">건위천 (乾爲天)</h2>
+                <div class="inline-block mt-2 px-3 py-1 rounded-full text-sm font-bold" id="fortune-badge">
+                    대길 (大吉)
+                </div>
+            </div>
+
+            <!-- 총평 -->
+            <div class="p-6">
+                <h3 class="text-lg font-bold text-blue-900 mb-2 border-l-4 border-blue-900 pl-2">📜 주역 해운(海運) 총평</h3>
+                <p id="fortune-desc" class="text-gray-700 leading-relaxed mb-6 italic bg-gray-50 p-4 rounded-lg">
+                    설명
+                </p>
+
+                <!-- 낚시 상세 정보 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <h4 class="font-bold text-blue-800 flex items-center mb-1">📍 추천 포인트</h4>
+                        <p id="res-point" class="text-sm text-gray-700">포인트 이름</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <h4 class="font-bold text-blue-800 flex items-center mb-1">🐟 대상어 및 조과율</h4>
+                        <p id="res-species" class="text-sm text-gray-700">대상어 (확률)</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <h4 class="font-bold text-blue-800 flex items-center mb-1">🎒 필수 장비/채비</h4>
+                        <p id="res-gear" class="text-sm text-gray-700">장비 설명</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                        <h4 class="font-bold text-red-800 flex items-center mb-1">⚠️ 주의/안전사항</h4>
+                        <p id="res-safety" class="text-sm text-gray-700">안전 수칙</p>
+                    </div>
+                </div>
+
+                <!-- 행운의 징크스 -->
+                <h3 class="text-lg font-bold text-blue-900 mb-2 border-l-4 border-blue-900 pl-2">🍀 행운의 징크스</h3>
+                <ul class="list-disc list-inside text-gray-700 text-sm space-y-1 mb-6 p-4 bg-yellow-50 rounded-lg">
+                    <li><span class="font-semibold">행운의 컬러 (찌/루어):</span> <span id="lucky-color">빨강</span></li>
+                    <li><span class="font-semibold">어복이 깃든 방위:</span> <span id="lucky-dir">남동쪽</span></li>
+                    <li><span class="font-semibold">입질 피크 타임:</span> <span id="lucky-time">오전 7시 ~ 9시</span></li>
+                </ul>
+
+                <button class="w-full border-2 border-blue-900 text-blue-900 font-bold py-3 rounded-xl hover:bg-blue-50 transition duration-300" onclick="resetForm()">
+                    다시 점치기
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="text-center p-4 text-gray-500 text-xs mt-auto">
+        본 점괘는 주역을 바탕으로 한 유희용입니다.<br>실제 출조 시에는 구명조끼 착용 등 기상청 특보와 안전을 최우선으로 하십시오.
+    </footer>
+
+    <script>
+        // 오늘 날짜 기본 세팅
+        document.getElementById('fishing-date').valueAsDate = new Date();
+
+        // 장르 분류 배열 추가
+        const seaGenres = ["갯바위 낚시", "방파제 낚시", "선상 낚시", "원투 낚시", "에깅 (Eging)", "지깅 (Jigging)", "타이라바", "쇼어 지깅", "농어/볼락/광어 루어"];
+        const freshGenres = ["붕어 낚시", "바닥 낚시", "중층/내림 낚시", "잉어/장어 원투 낚시", "배스 루어", "쏘가리 루어", "계류 루어 (송어/산천어/꺽지)"];
+
+        // 장르별 지역 데이터 및 포인트/어종/장비 매핑 (핵심 데이터베이스)
+        const fishingDB = {
+            sea: {
+                regions: ["서해권 (인천/태안/보령)", "서남해권 (군산/목포/신안)", "남해동부권 (부산/거제/통영)", "남해서부권 (여수/고흥/완도)", "동해권 (강릉/속초/포항)", "제주권 (본섬/부속섬)"],
+                data: {
+                    "갯바위 낚시": {
+                        "남해동부권 (부산/거제/통영)": { point: "가덕도, 통영 비진도, 거제 해금강 갯바위", species: "감성돔, 벵에돔", gear: "1호대, 2500번 릴, 구멍찌/막대찌 0.5~1호, 크릴", safety: "너울성 파도 극히 주의, 갯바위 단화 및 구명조끼 필수 착용, 펠트화 밑창 점검" },
+                        "남해서부권 (여수/고흥/완도)": { point: "거문도, 금오도, 청산도 갯바위", species: "감성돔, 참돔, 벵에돔", gear: "1.2~1.5호대, 3000번 릴, 무거운 반유동 채비", safety: "조류가 매우 빠르니 휩쓸림 주의, 갯바위 하선 시 선장 지시 철저히 이행" },
+                        "제주권 (본섬/부속섬)": { point: "가파도, 마라도, 지귀도", species: "긴꼬리벵에돔, 넙치농어", gear: "1.5~2호대, 3000번 릴, 제로(0)찌 투제로(00)찌 전유동", safety: "돌풍 및 급격한 기상 변화 주의, 화산암이 날카로우니 장갑 필수" },
+                        "동해권 (강릉/속초/포항)": { point: "구룡포, 영덕 갯바위 및 동해안 갯바위", species: "감성돔, 무늬오징어", gear: "1호대, 저부력 찌, 에깅대(오징어용)", safety: "동해안 특유의 너울성 파도(한 방) 절대 주의, 젖은 방파제 테트라포드 진입 금지" },
+                        "서해권 (인천/태안/보령)": { point: "격렬비열도, 안면도 갯바위", species: "감성돔, 우럭, 광어", gear: "1호대, 고부력 반유동, 원투 채비 겸용", safety: "간조/만조 시 조수간만의 차가 크므로 갯바위 고립 절대 주의 (물때표 확인 필수)" },
+                        "서남해권 (군산/목포/신안)": { point: "십이동파도, 가거도, 태도", species: "감성돔, 참돔, 돌돔", gear: "1.5~2호대, 원투 낚시대 혼용, 혼무시/성게", safety: "포인트 지형이 험하고 간만의 차가 크므로 퇴로 확보 필수" }
+                    },
+                    "방파제 낚시": {
+                        "전국공통": { point: "주요 항구 및 방파제 외/내항", species: "고등어, 전갱이, 볼락, 우럭", gear: "루어대 또는 가벼운 민장대, 카드채비, 크릴", safety: "테트라포드(삼발이) 진입 절대 금지, 내항 석축 미끄러짐 주의, 쓰레기 되가져가기" }
+                    },
+                    "선상 낚시": {
+                        "남해동부권 (부산/거제/통영)": { point: "진해만(봄 도다리), 통영 먼바다(갈치/한치)", species: "도다리, 갈치, 한치", gear: "선상 전용대, 소형 전동릴/베이트릴, 카드채비", safety: "승선 명부 작성 및 신분증 지참 필수, 선내 음주 절대 금지" },
+                        "남해서부권 (여수/고흥/완도)": { point: "여수 먼바다, 백도 권역", species: "갈치, 문어, 갑오징어", gear: "문어/갑오징어 전용대, 합사 1~3호", safety: "배 이동 시 선실 대기, 낚시 중 채비 엉킴 시 무리한 행동 자제" },
+                        "제주권 (본섬/부속섬)": { point: "차귀도, 우도 앞바다, 마라도 인근", species: "참돔, 옥돔, 한치", gear: "타이라바 낚싯대, 이카메탈 장비", safety: "멀미약은 승선 30분 전 복용, 갑작스러운 너울 주의" },
+                        "동해권 (강릉/속초/포항)": { point: "왕돌초, 영일만, 공현진", species: "대구, 가자미, 방어/부시리", gear: "우럭/대구용 전동릴 장비, 무거운 봉돌(80~100호)", safety: "수심이 깊고 채비가 무거워 투척 시 손가락 부상 주의" },
+                        "서해권 (인천/태안/보령)": { point: "오천항, 대천항 인근 먼바다", species: "주꾸미, 갑오징어, 광어/우럭", gear: "주꾸미/갑오징어 전용대, 소형 베이트릴, 에기", safety: "배들이 밀집해 있으므로 캐스팅 시 옆/뒤 사람 확인 필수" },
+                        "서남해권 (군산/목포/신안)": { point: "비응항, 야미도 선상", species: "참돔, 광어, 주꾸미", gear: "타이라바 및 다운샷 전용대", safety: "강한 조류에 대비한 무거운 채비 운영 요망, 선상 미끄럼 주의" }
+                    },
+                    "원투 낚시": {
+                        "전국공통": { point: "백사장 및 방파제 외항", species: "도다리, 보리멸, 붕장어, 감성돔", gear: "원투 전용대(25~30호), 대형 스피닝 릴, 묶음추 채비, 청갯지렁이/참갯지렁이", safety: "캐스팅 시 뒤에 사람이나 장애물이 없는지 반드시 확인, 야간 낚시 시 방한 철저" }
+                    },
+                    "에깅 (Eging)": {
+                        "전국공통": { point: "방파제 갯바위 및 홈통 지형", species: "무늬오징어, 갑오징어, 한치", gear: "에깅 전용대(ML~M), 2500~3000번 쉘로우 스풀 릴, 합사 0.6~0.8호, 에기 2.5~3.5호", safety: "먹물에 의한 오염 주의, 갯바위 진입 시 단화 착용, 야간 에깅 시 헤드랜턴 필수 (단, 수면 비추기 금지)" }
+                    },
+                    "지깅 (Jigging)": {
+                        "전국공통": { point: "먼바다 선상 포인트 (수심 깊은 곳)", species: "방어, 부시리, 다랑어류", gear: "버티컬 지깅/파핑 전용대, 대형 스피닝/베이트릴, 메탈지그 100~300g, 굵은 합사(3~6호 이상)", safety: "대물과의 파이팅 시 허리 부상 주의, 낚싯대 파손 대비, 짐벌(파이팅 벨트) 착용 필수" }
+                    },
+                    "타이라바": {
+                        "전국공통": { point: "암초대 및 어초 주변 (선상)", species: "참돔, 쏨뱅이, 광어", gear: "연질 타이라바 전용대, 소형 베이트릴, 합사 1호 내외, 타이라바(40~120g)", safety: "바닥을 찍고 감아올리는 단순 동작 반복이나 조류에 따른 무게 교체 빈번, 선상 미끄럼 주의" }
+                    },
+                    "쇼어 지깅": {
+                        "전국공통": { point: "조류 소통이 좋은 갯바위 및 방파제", species: "방어, 부시리, 삼치, 만새기", gear: "쇼어지깅 전용대(9~10ft), 5000번 이상 스피닝 릴, 메탈지그 40~80g", safety: "비거리 확보를 위한 강한 캐스팅 시 뒤쪽 안전 확보 철저, 갯바위 뜰채질 시 너울 파도 절대 주의" }
+                    },
+                    "농어/볼락/광어 루어": {
+                        "전국공통": { point: "연안 갯바위, 방파제, 백사장 지형", species: "농어, 볼락, 광어, 우럭", gear: "장르별 범용 루어대(볼락:UL, 광어:ML, 농어:M), 스피닝 릴(1000~3000번), 미노우/지그헤드", safety: "야간 낚시가 많으므로 지형 숙지 필수, 웨이더 착용 시 가슴 장화 위로 물이 넘치지 않도록 조심" }
+                    }
+                }
+            },
+            fresh: {
+                regions: ["한강 수계 (경기/강원/서울)", "금강 수계 (충북/충남/대전)", "영산강/섬진강 수계 (전북/전남/광주)", "낙동강 수계 (경북/경남/대구/부산)"],
+                data: {
+                    "배스 루어": {
+                        "한강 수계 (경기/강원/서울)": { point: "파주 공릉천, 춘천 파로호/의암호, 평택호", species: "큰입배스", gear: "M~MH 루어대, 베이트릴, 프리리그/스피너베이트", safety: "수초지대 뱀/독충 주의, 웨이더 착용 시 수심 급강하 구역 조심" },
+                        "금강 수계 (충북/충남/대전)": { point: "대청호, 탑정호, 예당저수지", species: "큰입배스, 런커 급", gear: "MH~H 루어대, 헤비커버용 합사/카본 14lb 이상", safety: "보팅 시 구명조끼 필수, 도보 낚시 시 진흙밭 미끄러짐 주의" },
+                        "영산강/섬진강 수계 (전북/전남/광주)": { point: "장성호, 영산강, 나주호, 동진강", species: "큰입배스", gear: "ML~M 스피닝/베이트 장비, 탑워터 및 미노우", safety: "여름철 살인진드기 및 모기 기피제 필수, 수풀 해치기용 스틱 지참" },
+                        "낙동강 수계 (경북/경남/대구/부산)": { point: "안동호, 낙동강 본류, 합천호", species: "큰입배스", gear: "M 액션 범용대, 크랭크베이트, 텍사스리그", safety: "강변 급류 주의, 멧돼지 등 야생동물 출몰 지역 야간 단독 출조 자제" }
+                    },
+                    "쏘가리 루어": {
+                        "금강 수계 (충북/충남/대전)": { point: "금강 본류, 옥천/영동 권역", species: "쏘가리, 꺽지", gear: "L~ML 계류용 스피닝대, 1000~2000번 릴, 1/16oz 지그헤드, 미노우", safety: "계류화(펠트 스파이크) 필수, 이끼 낀 호박돌 미끄러짐에 의한 골절 주의" },
+                        "한강 수계 (경기/강원/서울)": { point: "단양 남한강, 홍천강, 동강", species: "쏘가리, 꺽지", gear: "계류 전용 스피닝 장비, 얇은 합사(0.4~0.6호)", safety: "갑작스러운 댐 방류에 대비하여 퇴로 항상 확보, 급류 도하 금지" },
+                        "낙동강 수계 (경북/경남/대구/부산)": { point: "밀양강, 경호강", species: "쏘가리, 꺽지", gear: "L 액션 스피닝 장비, 서스펜딩 미노우", safety: "수위 변화에 민감하게 반응할 것, 뱀 출몰 극히 주의" }
+                    },
+                    "붕어 낚시": {
+                        "전국공통": { point: "수로 및 평지형 저수지, 관리형 낚시터", species: "토종붕어", gear: "2.5~3.2칸 민물대 2~3대, 원줄 2호, 목줄 1호, 지렁이/글루텐", safety: "야간 낚시 시 난로 일산화탄소 중독 텐트 내 절대 주의 (환기 필수), 음주 낚시 금지" }
+                    },
+                    "바닥 낚시": {
+                        "전국공통": { point: "주요 저수지 및 댐 연안", species: "토종붕어, 떡붕어, 잉어", gear: "다대편성(5~10대), 찌맞춤을 무겁게 한 원봉돌 채비, 옥수수/새우", safety: "장박 시 식수 및 위생 관리 철저, 뱀이나 야생동물 접근 주의" }
+                    },
+                    "중층/내림 낚시": {
+                        "전국공통": { point: "관리형 낚시터, 떡붕어 전용터", species: "떡붕어", gear: "가벼운 중층 전용대, 가는 원줄(0.8~1.2호)과 목줄, 예민한 찌, 집어제/미끼용 떡밥", safety: "채비가 매우 가벼워 바람의 영향을 많이 받음, 바늘이 작고 날카로우니 손가락 찔림 주의" }
+                    },
+                    "잉어/장어 원투 낚시": {
+                        "전국공통": { point: "대형 댐, 큰 강계 본류대", species: "잉어, 민물장어", gear: "강력한 릴찌대 또는 원투대, 대형 스피닝/베이트릴, 굵은 합사/나일론, 청지렁이/거머리/떡밥", safety: "대물의 강한 저항으로 낚싯대 분실 우려(뒷줄 필수 결속), 심야 낚시 시 이슬에 의한 미끄러짐 및 저체온증 대비" }
+                    },
+                    "계류 루어 (송어/산천어/꺽지)": {
+                        "전국공통": { point: "산간 계곡, 유료 송어터", species: "산천어, 무지개송어, 꺽지", gear: "XUL~UL 초연질대, 1000번 스피닝 릴, 얇은 카본/에스테르 라인, 마이크로 스푼/작은 웜", safety: "곰, 멧돼지 등 야생동물 주의(방울 지참 권장), 매우 미끄러운 계곡 지형이므로 스파이크 펠트화 필수" }
+                    }
+                }
+            }
+        };
+
+        // 주역 64괘 중 낚시에 어울리는 대표 점괘 10개 (대길~흉)
+        const iChingFortunes = [
+            {
+                name: "건위천 (乾爲天)", symbol: "䷀", level: "대길 (大吉)", color: "bg-blue-600 text-white", probability: "95%",
+                desc: "용이 하늘을 나는 격입니다. 오늘 용왕님은 당신의 편입니다. 던지면 무는 '1타 1피'의 기운이 강하니, 채비를 튼튼히 하고 대물의 강렬한 저항에 대비하십시오."
+            },
+            {
+                name: "수천수 (水天需)", symbol: "䷄", level: "길 (吉)", color: "bg-green-600 text-white", probability: "75%",
+                desc: "기다림의 미학입니다. 초반에는 입질이 없어 초조할 수 있으나, 물때(조류)가 바뀌는 찰나에 폭발적인 입질이 들어옵니다. 밑밥을 꾸준히 주며 때를 기다리십시오."
+            },
+            {
+                name: "지수사 (地水師)", symbol: "䷆", level: "평길 (平吉)", color: "bg-teal-600 text-white", probability: "60%",
+                desc: "장수가 군대를 지휘하는 형국입니다. 오늘은 운보다는 실력과 전략이 조과를 좌우합니다. 대상어의 수심층을 빠르게 파악하고, 수시로 루어나 미끼를 교체하는 부지런함이 필요합니다."
+            },
+            {
+                name: "풍수환 (風水渙)", symbol: "䷺", level: "변동 (變動)", color: "bg-yellow-500 text-white", probability: "50%",
+                desc: "바람이 물 위를 불어 흩어지는 상입니다. 기상 변화(바람, 너울)가 심할 수 있습니다. 대상어들이 예민해져 있으니, 채비를 가볍고 예민하게 쓰고 뒷줄 견제를 철저히 하십시오."
+            },
+            {
+                name: "뇌수해 (雷水解)", symbol: "䷧", level: "대길 (大吉)", color: "bg-blue-600 text-white", probability: "85%",
+                desc: "얼음이 풀리고 봄비가 내리는 상입니다. 굳게 닫혔던 대상어의 입이 열립니다! 특히 피딩 타임에 폭발적인 활성도가 예상되니, 휴식은 입질이 뜸할 때 취하고 집중하십시오."
+            },
+            {
+                name: "화택규 (火澤睽)", symbol: "䷥", level: "흉 (凶)", color: "bg-red-600 text-white", probability: "30%",
+                desc: "불은 위로, 물은 아래로 가며 서로 어긋나는 상입니다. 대상어의 활성도가 바닥을 칩니다. 내가 노리는 수심층과 고기가 있는 곳이 다릅니다. 고정관념을 버리고 완전히 새로운 채비나 포인트를 탐색해야 면꽝합니다."
+            },
+            {
+                name: "천수송 (天水訟)", symbol: "䷅", level: "주의 (注意)", color: "bg-orange-500 text-white", probability: "40%",
+                desc: "다툼이 일어나는 상입니다. 옆 조사와의 채비 엉킴, 포인트 선점 문제 등 스트레스받을 일이 생길 수 있습니다. 조과에 욕심내기보다 '힐링 낚시'에 의의를 두고 양보하는 미덕이 필요합니다."
+            },
+            {
+                name: "수뢰둔 (水雷屯)", symbol: "䷂", level: "고난 (苦難)", color: "bg-gray-700 text-white", probability: "20%",
+                desc: "새싹이 얼어붙은 땅을 뚫고 나오는 험난한 상입니다. 이른바 '용왕님 휴가 가신 날'입니다. 밑걸림이 심하고 잡어만 덤빌 확률이 높습니다. 무리한 출조보다 장비 정비를 추천하나, 꼭 가야 한다면 안전에만 유의하십시오."
+            }
+        ];
+
+        const luckyColors = ["레드/화이트", "내츄럴(멸치/빙어)", "워터멜론", "모터오일", "형광(차트루즈)", "핑크", "골드/블랙", "크릴 원색"];
+        const luckyDirs = ["해 뜨는 동쪽", "바람을 등지는 남쪽", "조류가 부딪히는 곶부리", "수심이 급격히 깊어지는 브레이크라인", "수초/여 밭 주변", "방파제 꺾이는 부분"];
+        const luckyTimes = ["해뜨기 직전 (아침 피딩)", "해질녘 (저녁 피딩)", "만조에서 썰물로 돌아서는 시점", "간조에서 밀물로 돌아서는 시점", "달이 남중하는 자정 무렵"];
+
+        function updateRegions() {
+            const genre = document.getElementById('fishing-genre').value;
+            const regionSelect = document.getElementById('fishing-region');
+            regionSelect.innerHTML = '<option value="">지역을 선택하세요</option>';
+
+            if (!genre) return;
+
+            // 바다 장르인지 민물 장르인지 판별
+            let type = "";
+            if (seaGenres.includes(genre)) type = "sea";
+            if (freshGenres.includes(genre)) type = "fresh";
+
+            if (type && fishingDB[type]) {
+                fishingDB[type].regions.forEach(region => {
+                    let opt = document.createElement('option');
+                    opt.value = region;
+                    opt.innerHTML = region;
+                    regionSelect.appendChild(opt);
+                });
+            }
+        }
+
+        function getFishingData(genre, region) {
+            let type = freshGenres.includes(genre) ? "fresh" : "sea";
+            
+            // 1. 지역까지 정확히 매칭되는 데이터가 있는 경우
+            if (fishingDB[type].data[genre] && fishingDB[type].data[genre][region]) {
+                return fishingDB[type].data[genre][region];
+            } 
+            // 2. 장르 특성상 전국공통 데이터가 있는 경우 (사용자 선택 지역명을 동적으로 조합)
+            else if (fishingDB[type].data[genre] && fishingDB[type].data[genre]["전국공통"]) {
+                let commonData = { ...fishingDB[type].data[genre]["전국공통"] };
+                commonData.point = `[${region}] 일대 ${commonData.point}`;
+                return commonData;
+            } 
+            // 3. 둘 다 없는 경우 폴백
+            else {
+                return {
+                    point: `[${region}] 일대의 유명 ${genre} 포인트`,
+                    species: `${genre} 주요 대상어`,
+                    gear: "해당 장르의 표준 장비 (낚시점 문의 권장)",
+                    safety: "기상청 특보 확인, 구명조끼 및 미끄럼 방지화 필수 착용, 무리한 진입 금지"
+                };
+            }
+        }
+
+        function castDivination() {
+            const date = document.getElementById('fishing-date').value;
+            const genre = document.getElementById('fishing-genre').value;
+            const region = document.getElementById('fishing-region').value;
+
+            if (!date || !genre || !region) {
+                alert("출조일자, 장르, 지역을 모두 선택해주셔야 하늘의 뜻을 묻을 수 있습니다.");
+                return;
+            }
+
+            // UI 상태 변경
+            document.getElementById('input-section').classList.add('hidden');
+            document.getElementById('loading-section').classList.remove('hidden');
+
+            // 1.5초 후 점괘 결과 도출
+            setTimeout(() => {
+                showResult(date, genre, region);
+            }, 1800);
+        }
+
+        function showResult(date, genre, region) {
+            document.getElementById('loading-section').classList.add('hidden');
+            document.getElementById('result-section').classList.remove('hidden');
+
+            // 1. 점괘 랜덤 선택 (날짜+길이 등을 시드로 쓰면 좋지만 여기선 Math.random)
+            // 출조일 문자열의 숫자를 모두 더해 약간의 의사 난수 생성
+            const dateSum = date.replace(/-/g, '').split('').reduce((acc, val) => acc + parseInt(val), 0);
+            let randIdx = (dateSum + Math.floor(Math.random() * 100)) % iChingFortunes.length;
+            const fortune = iChingFortunes[randIdx];
+
+            // 2. 낚시 데이터 가져오기
+            const fData = getFishingData(genre, region);
+
+            // 3. UI 업데이트 - 주역 점괘
+            document.getElementById('gua-symbol').innerText = fortune.symbol;
+            document.getElementById('gua-name').innerText = fortune.name;
+            
+            const badge = document.getElementById('fortune-badge');
+            badge.innerText = fortune.level;
+            badge.className = `inline-block mt-2 px-4 py-1 rounded-full text-sm font-bold ${fortune.color}`;
+            
+            document.getElementById('fortune-desc').innerHTML = `<strong>[용왕님의 메세지]</strong><br>${fortune.desc}`;
+
+            // 4. UI 업데이트 - 낚시 상세
+            document.getElementById('res-point').innerText = fData.point;
+            // 확률을 주역 점괘에 따라 변경
+            document.getElementById('res-species').innerText = `${fData.species} (조과 확률: ${fortune.probability})`;
+            document.getElementById('res-gear').innerText = fData.gear;
+            document.getElementById('res-safety').innerHTML = `<span class="text-red-600 font-bold">${fData.safety}</span>`;
+
+            // 5. 행운의 징크스 랜덤
+            document.getElementById('lucky-color').innerText = luckyColors[Math.floor(Math.random() * luckyColors.length)];
+            document.getElementById('lucky-dir').innerText = luckyDirs[Math.floor(Math.random() * luckyDirs.length)];
+            document.getElementById('lucky-time').innerText = luckyTimes[Math.floor(Math.random() * luckyTimes.length)];
+        }
+
+        function resetForm() {
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('input-section').classList.remove('hidden');
+            // 스크롤 위로
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
