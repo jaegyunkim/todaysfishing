@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>釣運易解 (ちょううんえきかい)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap');
+        body {
+            font-family: 'Noto Serif JP', serif;
+            background-color: #f3f4f6;
+            background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+        }
+        .gua-symbol {
+            font-size: 3rem;
+            line-height: 1;
+            letter-spacing: 0.2rem;
+            color: #1e3a8a;
+        }
+        .casting-animation {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col">
+
+    <header class="bg-blue-900 text-white p-6 shadow-md text-center">
+        <h1 class="text-3xl font-bold mb-2">🌊 釣運易解 🎣</h1>
+        <p class="text-sm text-blue-200">天の意を読み、水の流れを釣る</p>
+    </header>
+
+    <main class="flex-grow max-w-lg w-full mx-auto p-4 sm:p-6 mt-4">
+        
+        <!-- 안내 문구 -->
+        <p class="text-[11px] sm:text-sm font-bold italic text-center text-blue-800 mb-4 tracking-tighter sm:tracking-normal">
+            数千のタックルから、あなたに合うのはただ一つ。<br>
+            AIベース 1:1 タックルキュレーション FishingPick
+        </p>
+
+        <!-- 입력 폼 -->
+        <div id="input-section" class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-blue-900">
+            <h2 class="text-sm sm:text-base font-bold mb-6 text-center text-gray-700">最高のアタリのために、釣行情報を入力してください。</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">釣行日</label>
+                    <input type="date" id="fishing-date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">釣りのジャンル</label>
+                    <select id="fishing-genre" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-transparent" onchange="updateRegions()">
+                        <option value="">ジャンルを選択してください</option>
+                        <optgroup label="海釣り">
+                            <option value="磯釣り">磯釣り</option>
+                            <option value="防波堤釣り">防波堤釣り</option>
+                            <option value="船釣り">船釣り</option>
+                            <option value="投げ釣り">投げ釣り</option>
+                            <option value="エギング">エギング</option>
+                            <option value="ジギング">ジギング</option>
+                            <option value="タイラバ">タイラバ</option>
+                            <option value="ショアジギング">ショアジギング</option>
+                            <option value="シーバス/メバル/ヒラメ ルアー">シーバス/メバル/ヒラメ ルアー</option>
+                        </optgroup>
+                        <optgroup label="淡水釣り">
+                            <option value="ヘラブナ/マブナ釣り">ヘラブナ/マブナ釣り</option>
+                            <option value="底釣り">底釣り</option>
+                            <option value="宙釣り/段差釣り">宙釣り/段差釣り</option>
+                            <option value="コイ/ウナギ ぶっこみ釣り">コイ/ウナギ ぶっこみ釣り</option>
+                            <option value="バスルアー">バスルアー</option>
+                            <option value="ネイティブトラウト">ネイティブトラウト</option>
+                            <option value="エリアトラウト (管釣り)">エリアトラウト (管釣り)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">釣行エリア</label>
+                    <select id="fishing-region" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-transparent">
+                        <option value="">先にジャンルを選択してください</option>
+                    </select>
+                </div>
+
+                <div class="pt-4">
+                    <button id="cast-btn" class="w-full bg-blue-900 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-800 transition duration-300 transform active:scale-95 text-lg" onclick="castDivination()">
+                        🙏 易占いを引く (キャスティング)
+                    </button>
+                    <p class="text-xs text-center text-gray-500 mt-2">心を無にし、ターゲット(本命)を思い浮かべながら押してください。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 로딩 애니메이션 -->
+        <div id="loading-section" class="hidden text-center py-12">
+            <div class="text-6xl mb-4 casting-animation">🎣</div>
+            <h3 class="text-xl font-bold text-gray-700">易の六十四卦を水面に浮かべています...</h3>
+            <p class="text-gray-500 mt-2">風水と潮の流れを読んでいます。</p>
+        </div>
+
+        <!-- 결과 화면 -->
+        <div id="result-section" class="hidden bg-white rounded-2xl shadow-xl border-t-4 border-blue-900 overflow-hidden fade-in">
+            <!-- 점괘 헤더 -->
+            <div class="bg-gray-50 p-6 text-center border-b border-gray-200">
+                <div id="gua-symbol" class="gua-symbol mb-2 font-black">䷀</div>
+                <h2 id="gua-name" class="text-2xl font-bold text-gray-800">乾為天 (けんいてん)</h2>
+                <div class="inline-block mt-2 px-3 py-1 rounded-full text-sm font-bold" id="fortune-badge">
+                    大吉
+                </div>
+            </div>
+
+            <!-- 총평 -->
+            <div class="p-6">
+                <h3 class="text-lg font-bold text-blue-900 mb-2 border-l-4 border-blue-900 pl-2">📜 易経 釣運総評</h3>
+                <p id="fortune-desc" class="text-gray-700 leading-relaxed mb-6 italic bg-gray-50 p-4 rounded-lg">
+                    説明
+                </p>
+
+                <!-- 낚시 상세 정보 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <h4 class="font-bold text-blue-800 flex items-center mb-1">📍 おすすめポイント</h4>
+                        <p id="res-point" class="text-sm text-gray-700">ポイント名</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <h4 class="font-bold text-blue-800 flex items-center mb-1">🐟 本命と釣果確率</h4>
+                        <p id="res-species" class="text-sm text-gray-700">ターゲット (確率)</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <h4 class="font-bold text-blue-800 flex items-center mb-1">🎒 必須タックル/仕掛け</h4>
+                        <p id="res-gear" class="text-sm text-gray-700">装備説明</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                        <h4 class="font-bold text-red-800 flex items-center mb-1">⚠️ 注意/安全事項</h4>
+                        <p id="res-safety" class="text-sm text-gray-700">安全規則</p>
+                    </div>
+                </div>
+
+                <!-- 행운의 징크스 -->
+                <h3 class="text-lg font-bold text-blue-900 mb-2 border-l-4 border-blue-900 pl-2">🍀 幸運のジンクス</h3>
+                <ul class="list-disc list-inside text-gray-700 text-sm space-y-1 mb-6 p-4 bg-yellow-50 rounded-lg">
+                    <li><span class="font-semibold">ラッキーカラー (ウキ/ルアー):</span> <span id="lucky-color">レッド</span></li>
+                    <li><span class="font-semibold">釣果を呼ぶ方角:</span> <span id="lucky-dir">南東</span></li>
+                    <li><span class="font-semibold">時合い (ピークタイム):</span> <span id="lucky-time">午前7時 ~ 9時</span></li>
+                </ul>
+
+                <button class="w-full border-2 border-blue-900 text-blue-900 font-bold py-3 rounded-xl hover:bg-blue-50 transition duration-300" onclick="resetForm()">
+                    もう一度占う
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="text-center p-4 text-gray-500 text-xs mt-auto">
+        本占いは易経に基づいたエンターテイメントです。<br>実際の釣行の際はライフジャケットの着用など、天気予報と安全を最優先にしてください。
+    </footer>
+
+    <script>
+        // 오늘 날짜 기본 세팅
+        document.getElementById('fishing-date').valueAsDate = new Date();
+
+        // 장르 분류 배열 추가 (일본어 매핑)
+        const seaGenres = ["磯釣り", "防波堤釣り", "船釣り", "投げ釣り", "エギング", "ジギング", "タイラバ", "ショアジギング", "シーバス/メバル/ヒラメ ルアー"];
+        const freshGenres = ["ヘラブナ/マブナ釣り", "底釣り", "宙釣り/段差釣り", "コイ/ウナギ ぶっこみ釣り", "バスルアー", "ネイティブトラウト", "エリアトラウト (管釣り)"];
+
+        // 일본 낚시 환경으로 로컬라이징된 DB
+        const fishingDB = {
+            sea: {
+                regions: ["関東/東京湾", "関西/瀬戸内海", "九州/玄界灘", "四国", "東北/北海道", "沖縄/離島"],
+                data: {
+                    "磯釣り": {
+                        "関西/瀬戸内海": { point: "和歌山 南紀、淡路島、小豆島の地磯", species: "チヌ(クロダイ)、グレ(メジナ)", gear: "磯竿1号~1.5号、2500番レバーブレーキリール、円錐ウキ 0~1号、オキアミ", safety: "うねり波に極めて注意。磯靴(フェルトスパイク)及びライフジャケット必須。" },
+                        "九州/玄界灘": { point: "五島列島、男女群島、壱岐", species: "尾長グレ、イシダイ、マダイ", gear: "磯竿1.5~2号、3000番リール、重めの半遊動仕掛け", safety: "潮流が非常に速いため流されに注意。磯渡し時は船長の指示に絶対従うこと。" },
+                        "沖縄/離島": { point: "慶良間諸島、宮古島", species: "カスミアジ、タマン", gear: "磯竿2~3号、大型スピニング、太ハリス", safety: "突風及び急激な天候変化に注意。サンゴ礁の岩が鋭いためグローブ必須。" },
+                        "東北/北海道": { point: "三陸海岸、男鹿半島の磯", species: "クロダイ、アイナメ", gear: "磯竿1号、低浮力ウキ", safety: "特有のうねり(一発大波)に絶対注意。濡れたテトラポットへの進入禁止。" },
+                        "関東/東京湾": { point: "三浦半島、伊豆半島の地磯", species: "メジナ、クロダイ", gear: "磯竿1~1.5号、全遊動または半遊動仕掛け", safety: "干満の差が大きいため、干潮時に渡った磯での孤立に絶対注意（タイドグラフ確認必須）。" },
+                        "四国": { point: "日振島、鵜来島", species: "巨大尾長グレ", gear: "磯竿2号クラス、強靭なタックル", safety: "足場が険しく波を被りやすいため、退路の確保必須。" }
+                    },
+                    "防波堤釣り": {
+                        "全国共通": { point: "主要漁港の堤防・外向き/内向き", species: "アジ、サバ、イワシ、カサゴ", gear: "サビキ用ロッドまたはルアーロッド、サビキ仕掛け、アミエビ", safety: "テトラポットへの進入は避ける。内湾の石積みでの滑りに注意。ゴミは必ず持ち帰ること。" }
+                    },
+                    "船釣り": {
+                        "関東/東京湾": { point: "東京湾奥、相模湾", species: "アジ、タチウオ、カワハギ", gear: "ライトゲームロッド、小型両軸リール、PE1~2号", safety: "乗船名簿の記入と身分証持参。船内での過度な飲酒は控えること。" },
+                        "関西/瀬戸内海": { point: "明石海峡、鳴門海峡", species: "マダイ、タコ、タチウオ", gear: "タコ/タチウオテンヤ専用竿、PE2~3号", safety: "船の移動中はキャビン等で待機。オマツリ(仕掛け絡み)時は無理に引っ張らないこと。" },
+                        "沖縄/離島": { point: "那覇沖、慶良間海峡", species: "グルクン、アカジン、巨大カンパチ", gear: "大物用泳がせロッド、大型電動リール", safety: "酔い止めは乗船30分前に服用。急なうねりに注意。" },
+                        "東北/北海道": { point: "仙台湾、津軽海峡", species: "マダラ、カレイ、ブリ", gear: "深海用・青物用タックル、重いオモリ(80~150号)", safety: "水深が深く仕掛けが重いため、投入時の指の怪我に注意。" },
+                        "九州/玄界灘": { point: "呼子沖、対馬海峡", species: "ヤリイカ、落とし込み(ヒラマサ)", gear: "イカメタルロッド、落とし込み専用竿", safety: "船が密集するため、仕掛け投入時は周りを確認すること。" }
+                    },
+                    "投げ釣り": {
+                        "全国共通": { point: "サーフ(砂浜)及び防波堤外向き", species: "キス、カレイ、アナゴ", gear: "投げ専用竿(25~30号)、大型スピニングリール、投げ用天秤仕掛け、アオイソメ/ジャリメ", safety: "キャスト時は後ろに人や障害物がないか必ず確認。夜釣り時は防寒対策を徹底。" }
+                    },
+                    "エギング": {
+                        "全国共通": { point: "漁港のミオ筋、磯のワンド", species: "アオリイカ、コウイカ、ヤリイカ", gear: "エギング専用ロッド(ML~M)、2500~3000番シャロースプール、PE0.6~0.8号、エギ2.5~3.5号", safety: "墨による漁港の汚れに注意(必ず洗い流す)。夜間エギング時はヘッドライト必須(ただし水面は照らさない)。" }
+                    },
+                    "ジギング": {
+                        "全国共通": { point: "沖のドン深ポイント (遊漁船)", species: "ブリ、ヒラマサ、カンパチ", gear: "ジギング専用ロッド、大型スピニング/ベイトリール、メタルジグ100~300g、太PE(3~6号以上)", safety: "大物とのファイト時の腰の負傷に注意。ロッド破損に備え、ギンバル(ファイトベルト)着用を推奨。" }
+                    },
+                    "タイラバ": {
+                        "全国共通": { point: "岩礁帯及び漁礁周辺 (遊漁船)", species: "マダイ、根魚(キジハタ等)", gear: "タイラバ専用ロッド(乗せ調子)、小型両軸リール、PE0.8~1号、タイラバ(45~120g)", safety: "着底から一定速度で巻き上げる動作の繰り返し。潮の流れに合わせたヘッドの重量交換が頻繁。船上の滑りに注意。" }
+                    },
+                    "ショアジギング": {
+                        "全国共通": { point: "潮通しの良い地磯・沖堤防", species: "ブリ、サワラ、シイラ", gear: "ショアジギングロッド(9~10ft)、5000番以上のスピニング、メタルジグ40~80g", safety: "飛距離を出すためのフルキャスト時、後方の安全確認を徹底。磯でのランディング時は波に絶対注意。" }
+                    },
+                    "シーバス/メバル/ヒラメ ルアー": {
+                        "全国共通": { point: "河口、防波堤、サーフ", species: "シーバス、メバル、ヒラメ、マゴチ", gear: "各専用ルアーロッド、スピニングリール(2000~3000番)、ミノー/ジグヘッド+ワーム", safety: "夜釣りが多いので地形の把握は必須。ウェーディング時はエイに注意し、すり足で歩くこと(エイガード推奨)。" }
+                    }
+                }
+            },
+            fresh: {
+                regions: ["霞ヶ浦水系 (関東)", "琵琶湖水系 (関西)", "吉野川/四国水系", "筑後川/九州水系", "富士五湖/山間部"],
+                data: {
+                    "バスルアー": {
+                        "霞ヶ浦水系 (関東)": { point: "霞ヶ浦本湖、北浦、流入河川", species: "ブラックバス", gear: "M~MHロッド、ベイトリール、テキサスリグ/スピナーベイト", safety: "アシ原の蛇や毒虫に注意。ぬかるみでの足の抜け込みに注意。" },
+                        "琵琶湖水系 (関西)": { point: "琵琶湖南湖、北湖、野洲川", species: "ブラックバス (ロクマルクラス)", gear: "MH~Hロッド、ヘビーカバー用PE/フロロ14lb以上", safety: "ボート釣行時はライフジャケット必須。ウェーディング時は急なブレイク(カケ上がり)に注意。" },
+                        "吉野川/四国水系": { point: "早明浦ダム、旧吉野川", species: "ブラックバス", gear: "ML~Mタックル、トップウォーター、ジャークベイト", safety: "夏場のダニや蚊の対策必須。藪漕ぎ用の装備を用意。" },
+                        "筑後川/九州水系": { point: "遠賀川、芹川ダム", species: "ブラックバス", gear: "Mアクション汎用ロッド、クランクベイト", safety: "河川の急流に注意。イノシシなど野生動物の出没エリアでの夜間単独釣行は控える。" },
+                        "富士五湖/山間部": { point: "河口湖、山中湖、芦ノ湖", species: "ブラックバス、ネイティブトラウト", gear: "L~MLスピニング、ポーク(ワーム禁止エリア有)", safety: "漁協のルール(ワーム使用禁止等)を厳守。遊漁券を必ず購入すること。" }
+                    },
+                    "ネイティブトラウト": {
+                        "全国共通": { point: "山間の渓流、本流", species: "ヤマメ、イワナ、ニジマス", gear: "L~ML渓流用スピニング、1000~2000番リール、シンキングミノー", safety: "渓流シューズ(フェルトスパイク)必須。苔むした岩での転倒に注意。熊よけの鈴を持参。" }
+                    },
+                    "ヘラブナ/マブナ釣り": {
+                        "全国共通": { point: "野池、河川のワンド、管理釣り場", species: "ヘラブナ、マブナ", gear: "ヘラ竿(8~15尺)、道糸1号前後、ハリス0.5号、練りエサ/グルテン", safety: "夜釣り時、テント内での暖房器具による一酸化炭素中毒に絶対注意(換気必須)。" }
+                    },
+                    "エリアトラウト (管釣り)": {
+                        "全国共通": { point: "管理釣り場 (ポンド型/ストリーム型)", species: "ニジマス(トラウト全般)", gear: "XUL~UL超軟調ロッド、1000番スピニング、極細エステル/フロロライン、マイクロスプーン/クランク", safety: "レギュレーション(バーブレスフック必須、リリースルール等)を絶対厳守。後ろを確認してキャスト。" }
+                    },
+                    "底釣り": {
+                        "全国共通": { point: "主要な湖沼、ダム湖", species: "コイ、大型ヘラブナ", gear: "長竿、重めのオモリで底を取る仕掛け、コーン/サツマイモ", safety: "長期戦になるため飲料水と体調管理を徹底。野生動物の接近に注意。" }
+                    },
+                    "宙釣り/段差釣り": {
+                        "全国共通": { point: "管理釣り場", species: "ヘラブナ", gear: "軽量な中層専用竿、細糸、繊細なウキ、バラケと食わせエサ", safety: "仕掛けが非常に軽く風の影響を受けやすい。針が小さく鋭利なので指への刺さりに注意。" }
+                    },
+                    "コイ/ウナギ ぶっこみ釣り": {
+                        "全国共通": { point: "大規模な河川の本流域", species: "コイ、ウナギ、ナマズ", gear: "強力な投げ竿、大型スピニングリール、太糸、ミミズ/練りエサ", safety: "大物の強い引きで竿を持っていかれる恐れあり(尻手ロープ必須)。夜釣り時の落水に注意。" }
+                    }
+                }
+            }
+        };
+
+        // 주역 64괘 일본어 번역
+        const iChingFortunes = [
+            {
+                name: "乾為天 (けんいてん)", symbol: "䷀", level: "大吉", color: "bg-blue-600 text-white", probability: "95%",
+                desc: "龍が天を飛ぶ象（かたち）です。今日、竜王様はあなたの味方です。投げれば食う「1キャスト1ヒット」の気が強いので、仕掛けを万全にし、大物の強烈な引きに備えてください。"
+            },
+            {
+                name: "水天需 (すいてんじゅ)", symbol: "䷄", level: "吉", color: "bg-green-600 text-white", probability: "75%",
+                desc: "「待つことの美学」です。序盤はアタリがなく焦るかもしれませんが、潮の変わり目に爆発的なアタリがやってきます。コマセ（撒き餌）を絶やさず、時合いを待ちましょう。"
+            },
+            {
+                name: "地水師 (ちすいし)", symbol: "䷆", level: "平吉", color: "bg-teal-600 text-white", probability: "60%",
+                desc: "将軍が軍を指揮する象です。今日は運よりも実力と戦略が釣果を左右します。ターゲットのタナ(遊泳層)を素早く把握し、こまめにルアーやエサをローテーションするマメさが必要です。"
+            },
+            {
+                name: "風水渙 (ふうすいかん)", symbol: "䷺", level: "変動", color: "bg-yellow-500 text-white", probability: "50%",
+                desc: "風が水面を吹き散らす象です。天候変化（風、うねり）が激しいかもしれません。魚が警戒しているため、仕掛けを軽く繊細にし、ラインメンディングを徹底してください。"
+            },
+            {
+                name: "雷水解 (らいすいかい)", symbol: "䷧", level: "大吉", color: "bg-blue-600 text-white", probability: "85%",
+                desc: "氷が解け、春雨が降る象です。固く閉ざされていたターゲットの口が開きます！特にマズメ時に爆発的な活性が予想されるため、休憩はアタリが遠のいた時に取り、集中しましょう。"
+            },
+            {
+                name: "火沢睽 (かたくけい)", symbol: "䷥", level: "凶", color: "bg-red-600 text-white", probability: "30%",
+                desc: "火は上へ、水は下へ行き、互いに背き合う象です。魚の活性が底をついています。狙っているタナと魚の居場所が違います。固定観念を捨て、全く新しい仕掛けやポイントを探らなければ「ボウズ」を逃れられません。"
+            },
+            {
+                name: "天水訟 (てんすいしょう)", symbol: "䷅", level: "注意", color: "bg-orange-500 text-white", probability: "40%",
+                desc: "争いが起こる象です。隣の釣り人とのオマツリ（仕掛け絡み）や、場所取りの問題などストレスを感じることがあるかもしれません。釣果に執着せず、「癒しの釣り」と割り切り譲り合う美徳が必要です。"
+            },
+            {
+                name: "水雷屯 (すいらいちゅん)", symbol: "䷂", level: "苦難", color: "bg-gray-700 text-white", probability: "20%",
+                desc: "新芽が凍りついた土を突き破る険しい象です。いわゆる「竜王様がお休みの日」です。根掛かりが頻発し、エサ取りばかりが掛かる確率が高いです。無理な釣行よりも道具のメンテナンスをおすすめしますが、どうしても行くなら安全第一で。"
+            }
+        ];
+
+        const luckyColors = ["レッド/ホワイト", "ナチュラル(イワシ/ワカサギ)", "ウォーターメロン", "モーターオイル", "チャート(蛍光イエロー)", "ピンク", "ゴールド/ブラック", "オキアミ原色"];
+        const luckyDirs = ["日の出の東", "風を背にする南", "潮がぶつかる岬", "急激な駆け上がり(ブレイク)", "ウィード(水草)/シモリ(隠れ根)周辺", "堤防の曲がり角"];
+        const luckyTimes = ["朝マズメ", "夕マズメ", "満潮からの下げ始め", "干潮からの上げ始め", "月が南中する真夜中"];
+
+        function updateRegions() {
+            const genre = document.getElementById('fishing-genre').value;
+            const regionSelect = document.getElementById('fishing-region');
+            regionSelect.innerHTML = '<option value="">エリアを選択してください</option>';
+
+            if (!genre) return;
+
+            let type = "";
+            if (seaGenres.includes(genre)) type = "sea";
+            if (freshGenres.includes(genre)) type = "fresh";
+
+            if (type && fishingDB[type]) {
+                fishingDB[type].regions.forEach(region => {
+                    let opt = document.createElement('option');
+                    opt.value = region;
+                    opt.innerHTML = region;
+                    regionSelect.appendChild(opt);
+                });
+            }
+        }
+
+        function getFishingData(genre, region) {
+            let type = freshGenres.includes(genre) ? "fresh" : "sea";
+            
+            if (fishingDB[type].data[genre] && fishingDB[type].data[genre][region]) {
+                return fishingDB[type].data[genre][region];
+            } 
+            else if (fishingDB[type].data[genre] && fishingDB[type].data[genre]["全国共通"]) {
+                let commonData = { ...fishingDB[type].data[genre]["全国共通"] };
+                commonData.point = `[${region}] 周辺の${commonData.point}`;
+                return commonData;
+            } 
+            else {
+                return {
+                    point: `[${region}] 周辺の有名${genre}ポイント`,
+                    species: `${genre}の主要ターゲット`,
+                    gear: "該当ジャンルの標準タックル (釣具店での確認を推奨)",
+                    safety: "天気予報を確認し、ライフジャケットや滑り止めシューズを必ず着用。無理な進入は禁止。"
+                };
+            }
+        }
+
+        function castDivination() {
+            const date = document.getElementById('fishing-date').value;
+            const genre = document.getElementById('fishing-genre').value;
+            const region = document.getElementById('fishing-region').value;
+
+            if (!date || !genre || !region) {
+                alert("釣行日、ジャンル、エリアをすべて選択して初めて天の意を問うことができます。");
+                return;
+            }
+
+            document.getElementById('input-section').classList.add('hidden');
+            document.getElementById('loading-section').classList.remove('hidden');
+
+            setTimeout(() => {
+                showResult(date, genre, region);
+            }, 1800);
+        }
+
+        function showResult(date, genre, region) {
+            document.getElementById('loading-section').classList.add('hidden');
+            document.getElementById('result-section').classList.remove('hidden');
+
+            const dateSum = date.replace(/-/g, '').split('').reduce((acc, val) => acc + parseInt(val), 0);
+            let randIdx = (dateSum + Math.floor(Math.random() * 100)) % iChingFortunes.length;
+            const fortune = iChingFortunes[randIdx];
+
+            const fData = getFishingData(genre, region);
+
+            document.getElementById('gua-symbol').innerText = fortune.symbol;
+            document.getElementById('gua-name').innerText = fortune.name;
+            
+            const badge = document.getElementById('fortune-badge');
+            badge.innerText = fortune.level;
+            badge.className = `inline-block mt-2 px-4 py-1 rounded-full text-sm font-bold ${fortune.color}`;
+            
+            document.getElementById('fortune-desc').innerHTML = `<strong>[竜王様からのメッセージ]</strong><br>${fortune.desc}`;
+
+            document.getElementById('res-point').innerText = fData.point;
+            document.getElementById('res-species').innerText = `${fData.species} (釣果確率: ${fortune.probability})`;
+            document.getElementById('res-gear').innerText = fData.gear;
+            document.getElementById('res-safety').innerHTML = `<span class="text-red-600 font-bold">${fData.safety}</span>`;
+
+            document.getElementById('lucky-color').innerText = luckyColors[Math.floor(Math.random() * luckyColors.length)];
+            document.getElementById('lucky-dir').innerText = luckyDirs[Math.floor(Math.random() * luckyDirs.length)];
+            document.getElementById('lucky-time').innerText = luckyTimes[Math.floor(Math.random() * luckyTimes.length)];
+        }
+
+        function resetForm() {
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('input-section').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
