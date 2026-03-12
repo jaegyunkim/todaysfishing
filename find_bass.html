@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>진짜 배스는 어디에?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+
+        body {
+            font-family: 'Jua', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #1f2937; /* PC 환경을 위한 어두운 배경 */
+            touch-action: none; /* 브라우저 기본 터치 액션 방지 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* 9:16 비율의 모바일 컨테이너 */
+        #mobile-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background-color: #86efac;
+            overflow: hidden;
+        }
+
+        /* 데스크탑 등 가로가 넓은 화면에서 9:16 비율 강제 적용 */
+        @media (min-aspect-ratio: 9/16) {
+            #mobile-container {
+                width: calc(100vh * (9 / 16));
+                box-shadow: 0 0 30px rgba(0,0,0,0.8); /* 폰 테두리 같은 그림자 효과 */
+            }
+        }
+
+        #game-viewport {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            cursor: grab;
+        }
+
+        #game-viewport:active {
+            cursor: grabbing;
+        }
+
+        #game-map {
+            width: 3000px;
+            height: 3000px;
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            position: absolute;
+            transform-origin: 0 0;
+            /* 맵 배경 디테일 */
+            background-image: 
+                radial-gradient(ellipse at 50% 50%, #bae6fd 0%, #7dd3fc 30%, transparent 40%),
+                radial-gradient(circle at 20% 80%, #fef08a 0%, transparent 20%),
+                radial-gradient(circle at 80% 20%, #fef08a 0%, transparent 20%);
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.1);
+        }
+
+        .map-object {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            user-select: none;
+            pointer-events: auto;
+            transition: transform 0.1s;
+        }
+
+        .map-object:active {
+            transform: translate(-50%, -50%) scale(0.9);
+        }
+
+        .target-bass-svg {
+            filter: drop-shadow(2px 4px 2px rgba(0,0,0,0.3));
+        }
+
+        /* 물보라 이펙트 */
+        .splash {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.8) 20%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            animation: splashAnim 0.6s ease-out forwards;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        @keyframes splashAnim {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+        }
+
+        /* 오답 이펙트 */
+        .wrong-flash {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(239, 68, 68, 0.4);
+            animation: flashAnim 0.3s ease-out forwards;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        @keyframes flashAnim {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* 힌트 핑 이펙트 */
+        .hint-ping {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border: 4px solid #ef4444;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: pingAnim 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+            pointer-events: none;
+            z-index: 40;
+        }
+
+        @keyframes pingAnim {
+            75%, 100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+        }
+
+        .ui-panel {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+<div id="mobile-container">
+    <!-- Game Viewport (Map Container) -->
+    <div id="game-viewport">
+        <div id="game-map">
+            <!-- JavaScript가 이곳에 오브젝트를 생성합니다 -->
+        </div>
+    </div>
+
+    <!-- Top UI (fixed -> absolute로 변경하여 컨테이너 내부에 종속) -->
+    <div class="absolute top-0 left-0 right-0 p-2 z-20 pointer-events-none">
+        <div class="max-w-2xl mx-auto bg-white/90 ui-panel rounded-2xl p-3 flex items-center justify-between border-2 border-green-500 pointer-events-auto">
+            <div class="flex items-center gap-2">
+                <div class="w-14 h-10 bg-blue-100 rounded-lg flex items-center justify-center border-2 border-blue-300" id="target-display">
+                    <!-- 타겟 배스 아이콘이 들어갈 자리 -->
+                </div>
+                <div>
+                    <h1 class="text-xs md:text-sm font-bold text-green-700">대상 배스는 어디에?</h1>
+                    <p class="text-[10px] md:text-xs text-gray-500">똑같은 배스를 찾으세요!</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="text-center">
+                    <div class="text-[10px] text-gray-500">남은 시간</div>
+                    <div id="timer" class="text-xl font-bold text-red-500 drop-shadow-sm">60</div>
+                </div>
+                <button id="hint-btn" class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 px-2 py-1 rounded-lg font-bold transition transform hover:scale-105 active:scale-95 shadow-md flex flex-col items-center">
+                    <span class="text-sm">🔍</span>
+                    <span class="text-[9px]">힌트(3)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals (fixed -> absolute로 변경) -->
+    <!-- Start Screen -->
+    <div id="start-modal" class="absolute inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-[90%] w-full p-6 text-center shadow-2xl border-4 border-green-500 transform transition-transform">
+            <h1 class="text-2xl md:text-3xl font-bold text-green-600 mb-2">🎣 배스는 어디에?</h1>
+            <p class="text-xs md:text-sm text-gray-600 mb-6">제1회 전국 배스 낚시 대회에 오신 것을 환영합니다!<br>복잡한 대회장 속에서 <strong>진짜 타겟 배스</strong>를 찾으세요.</p>
+            
+            <div class="bg-blue-50 p-3 rounded-xl mb-6 inline-block border-2 border-blue-200">
+                <p class="text-xs font-bold text-blue-800 mb-2">오늘의 타겟</p>
+                <div id="start-target-display" class="flex justify-center mb-2"></div>
+                <p class="text-[10px] text-gray-500">주의: 가짜 미끼나 비슷한 물고기에 속지 마세요!</p>
+            </div>
+
+            <ul class="text-left text-xs text-gray-700 mb-6 space-y-2 bg-gray-50 p-4 rounded-xl">
+                <li>👆 <strong>터치:</strong> 정답 확인 (오답 시 -5초)</li>
+                <li>🖐 <strong>드래그:</strong> 화면 이동</li>
+                <li>🔎 <strong>핀치 줌:</strong> 화면 확대 및 축소</li>
+            </ul>
+
+            <button id="start-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl text-lg shadow-lg transition transform hover:scale-105 active:scale-95">
+                게임 시작!
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Over (Fail) Screen -->
+    <div id="fail-modal" class="absolute inset-0 bg-black/60 z-50 items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-[90%] w-full p-6 text-center shadow-2xl border-4 border-gray-500">
+            <div class="text-5xl mb-4">⏰</div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">시간 초과!</h2>
+            <p class="text-sm text-gray-600 mb-6">아쉽게도 배스를 놓쳤습니다.<br>대회장이 너무 복잡했나요?</p>
+            <button class="restart-btn w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl text-lg shadow-lg transition transform hover:scale-105 active:scale-95">
+                다시 도전하기
+            </button>
+        </div>
+    </div>
+
+    <!-- Victory Screen -->
+    <div id="win-modal" class="absolute inset-0 bg-black/60 z-50 items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-[90%] w-full p-6 text-center shadow-2xl border-4 border-yellow-400">
+            <div class="text-5xl mb-4 animate-bounce">🏆</div>
+            <h2 class="text-3xl font-bold text-blue-600 mb-2">월척입니다!</h2>
+            <p class="text-sm text-gray-600 mb-4">정확히 대상 배스를 낚아올렸습니다!</p>
+            
+            <div class="bg-yellow-50 p-3 rounded-xl mb-4 border border-yellow-200">
+                <p class="text-xs text-yellow-800 font-bold">클리어 기록: <span id="record-time" class="text-xl text-yellow-600">0</span>초</p>
+                <div class="mt-1 text-[10px] text-gray-500">훌륭한 앵글러의 눈썰미를 가지셨군요!</div>
+            </div>
+
+            <!-- Reward Mockup -->
+            <div class="bg-gray-100 p-2 rounded-lg mb-6 border border-dashed border-gray-400">
+                <p class="text-[10px] font-bold text-gray-500 mb-1">🎁 특별 보상 쿠폰</p>
+                <p class="text-base font-bold text-gray-800">K-LURE 20% 할인권</p>
+                <p class="text-[9px] text-gray-400">협찬: (주)K-루어 (실제 사용할 수 없습니다)</p>
+            </div>
+
+            <div class="flex gap-2">
+                <button id="share-btn" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 rounded-xl text-sm shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-1">
+                    <span>📱</span> 자랑하기
+                </button>
+                <button class="restart-btn flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-xl text-sm shadow-lg transition transform hover:scale-105 active:scale-95">
+                    다시 하기
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+        // --- Game Config & State ---
+        const config = {
+            mapWidth: 3000,
+            mapHeight: 3000,
+            objectCount: 600, // 시각적 노이즈를 위한 오브젝트 수
+            timeLimit: 60,
+            penaltyTime: 5,
+            hintsMax: 3
+        };
+
+        let gameState = {
+            isPlaying: false,
+            timeLeft: config.timeLimit,
+            hintsLeft: config.hintsMax,
+            timerInterval: null,
+            targetX: 0,
+            targetY: 0,
+            startTime: 0
+        };
+
+        // --- SVGs & Assets ---
+        // 진짜 배스
+        const realBassSVG = `
+            <svg viewBox="0 0 100 50" width="50" height="25" class="target-bass-svg">
+                <polygon points="15,25 0,10 0,40" fill="#15803d" stroke="#14532d" stroke-width="1"/>
+                <ellipse cx="55" cy="25" rx="40" ry="18" fill="#4ade80" stroke="#166534" stroke-width="2"/>
+                <path d="M 30 35 Q 55 45 80 30" stroke="#fef08a" stroke-width="6" fill="none" stroke-linecap="round"/>
+                <path d="M 35 15 L 45 35 M 50 12 L 60 38 M 65 15 L 75 35" stroke="#14532d" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="80" cy="18" r="3" fill="#000"/>
+                <circle cx="81" cy="17" r="1" fill="#fff"/>
+                <path d="M 90 25 Q 85 30 95 35" stroke="#166534" stroke-width="2" fill="none"/>
+                <polygon points="55,7 45,0 65,0" fill="#15803d"/>
+            </svg>
+        `;
+
+        // 가짜 물고기 1
+        const fakeFish1SVG = `
+            <svg viewBox="0 0 100 50" width="45" height="22">
+                <polygon points="15,25 0,10 0,40" fill="#b45309"/>
+                <ellipse cx="55" cy="25" rx="40" ry="20" fill="#f59e0b" stroke="#78350f" stroke-width="2"/>
+                <circle cx="80" cy="18" r="3" fill="#000"/>
+            </svg>
+        `;
+
+        // 가짜 물고기 2
+        const fakeFish2SVG = `
+            <svg viewBox="0 0 100 50" width="55" height="20">
+                <polygon points="10,25 0,15 0,35" fill="#1d4ed8"/>
+                <ellipse cx="50" cy="25" rx="40" ry="12" fill="#3b82f6" stroke="#1e3a8a" stroke-width="1"/>
+                <circle cx="75" cy="20" r="2" fill="#000"/>
+            </svg>
+        `;
+
+        // 가짜 미끼 (루어)
+        const lureSVG = `
+            <svg viewBox="0 0 100 50" width="40" height="20">
+                <ellipse cx="50" cy="25" rx="30" ry="10" fill="#4ade80"/>
+                <circle cx="70" cy="23" r="2" fill="red"/>
+                <path d="M 20 25 C 10 25 10 40 20 40 L 25 35" stroke="silver" stroke-width="3" fill="none"/>
+            </svg>
+        `;
+
+        const noiseEmojis = [
+            '🌾', '🌾', '🌾', '🌱', '🌿', '🌳', '🌲',
+            '⛺', '🏕️', '🚙', '🪑', '⛱️', '🗑️',
+            '👨‍👩‍👦', '🏃', '🚶‍♂️', '🎣', '🎣', '🎣',
+            '🍖', '🍉', '🍺', '🍱',
+            '🦆', '🐸', '🐢', '🦋',
+            '🩴', '🧢', '🎒', '🕶️', '🪣'
+        ];
+
+        // --- DOM Elements ---
+        const containerEl = document.getElementById('mobile-container');
+        const mapEl = document.getElementById('game-map');
+        const viewportEl = document.getElementById('game-viewport');
+        const timerEl = document.getElementById('timer');
+        const hintBtn = document.getElementById('hint-btn');
+        const targetDisplays = [document.getElementById('target-display'), document.getElementById('start-target-display')];
+        
+        const modals = {
+            start: document.getElementById('start-modal'),
+            fail: document.getElementById('fail-modal'),
+            win: document.getElementById('win-modal')
+        };
+
+        // --- Utils: 컨테이너 기준 로컬 좌표 계산 ---
+        function getLocalCoords(clientX, clientY) {
+            const rect = viewportEl.getBoundingClientRect();
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        // --- Initialize UI ---
+        targetDisplays.forEach(el => el.innerHTML = realBassSVG);
+
+        // --- Map Generation ---
+        function generateMap() {
+            mapEl.innerHTML = ''; 
+            
+            for (let i = 0; i < config.objectCount; i++) {
+                const el = document.createElement('div');
+                el.className = 'map-object text-3xl md:text-4xl';
+                
+                const rand = Math.random();
+                if (rand < 0.1) el.innerHTML = fakeFish1SVG;
+                else if (rand < 0.2) el.innerHTML = fakeFish2SVG;
+                else if (rand < 0.25) el.innerHTML = lureSVG;
+                else el.innerHTML = noiseEmojis[Math.floor(Math.random() * noiseEmojis.length)];
+                
+                const x = Math.random() * (config.mapWidth - 100) + 50;
+                const y = Math.random() * (config.mapHeight - 100) + 50;
+                const rot = Math.random() * 360;
+                
+                el.style.left = `${x}px`;
+                el.style.top = `${y}px`;
+                el.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
+                
+                el.addEventListener('pointerdown', (e) => handleMapClick(e, false));
+                mapEl.appendChild(el);
+            }
+
+            const targetEl = document.createElement('div');
+            targetEl.className = 'map-object cursor-pointer z-30';
+            targetEl.innerHTML = realBassSVG;
+            
+            gameState.targetX = Math.random() * (config.mapWidth - 400) + 200;
+            gameState.targetY = Math.random() * (config.mapHeight - 400) + 200;
+            const targetRot = Math.random() * 360;
+            
+            targetEl.style.left = `${gameState.targetX}px`;
+            targetEl.style.top = `${gameState.targetY}px`;
+            targetEl.style.transform = `translate(-50%, -50%) rotate(${targetRot}deg)`;
+            
+            targetEl.addEventListener('pointerdown', (e) => handleMapClick(e, true));
+            mapEl.appendChild(targetEl);
+
+            for(let j=0; j<3; j++) {
+                const cover = document.createElement('div');
+                cover.className = 'map-object text-3xl pointer-events-none z-40 opacity-80';
+                cover.innerHTML = '🌿';
+                cover.style.left = `${gameState.targetX + (Math.random()*40-20)}px`;
+                cover.style.top = `${gameState.targetY + (Math.random()*40-20)}px`;
+                cover.style.transform = `translate(-50%, -50%) rotate(${Math.random()*360}deg)`;
+                mapEl.appendChild(cover);
+            }
+        }
+
+        // --- Game Logic ---
+        function startGame() {
+            gameState.isPlaying = true;
+            gameState.timeLeft = config.timeLimit;
+            gameState.hintsLeft = config.hintsMax;
+            gameState.startTime = Date.now();
+            updateUI();
+            
+            generateMap();
+            resetCamera();
+
+            modals.start.classList.add('hidden');
+            modals.fail.classList.add('hidden');
+            modals.win.classList.add('hidden');
+
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft--;
+                updateUI();
+                if (gameState.timeLeft <= 0) {
+                    endGame(false);
+                }
+            }, 1000);
+        }
+
+        function endGame(isWin) {
+            gameState.isPlaying = false;
+            clearInterval(gameState.timerInterval);
+            
+            if (isWin) {
+                const record = Math.floor((Date.now() - gameState.startTime) / 1000);
+                document.getElementById('record-time').innerText = record;
+                modals.win.classList.remove('hidden');
+                modals.win.classList.add('flex');
+            } else {
+                modals.fail.classList.remove('hidden');
+                modals.fail.classList.add('flex');
+            }
+        }
+
+        function updateUI() {
+            timerEl.innerText = Math.max(0, gameState.timeLeft);
+            if(gameState.timeLeft <= 10) timerEl.classList.add('animate-pulse');
+            else timerEl.classList.remove('animate-pulse');
+
+            hintBtn.querySelector('span:nth-child(2)').innerText = `힌트(${gameState.hintsLeft})`;
+            hintBtn.style.opacity = gameState.hintsLeft > 0 ? '1' : '0.5';
+        }
+
+        let isDraggingFlag = false;
+
+        function handleMapClick(e, isTarget) {
+            if (!gameState.isPlaying || isDraggingFlag) return;
+            e.stopPropagation();
+
+            const local = getLocalCoords(e.clientX, e.clientY);
+
+            if (isTarget) {
+                createSplash(local.x, local.y);
+                setTimeout(() => endGame(true), 800);
+            } else {
+                gameState.timeLeft -= config.penaltyTime;
+                flashRed();
+                updateUI();
+                showFloatingText("-5초", local.x, local.y);
+            }
+        }
+
+        // --- Visual Effects (컨테이너 내부에 렌더링) ---
+        function createSplash(x, y) {
+            const splash = document.createElement('div');
+            splash.className = 'splash';
+            splash.style.left = `${x}px`;
+            splash.style.top = `${y}px`;
+            containerEl.appendChild(splash);
+            setTimeout(() => splash.remove(), 600);
+        }
+
+        function flashRed() {
+            const flash = document.createElement('div');
+            flash.className = 'wrong-flash';
+            containerEl.appendChild(flash);
+            setTimeout(() => flash.remove(), 300);
+        }
+
+        function showFloatingText(text, x, y) {
+            const el = document.createElement('div');
+            el.innerText = text;
+            el.className = 'absolute text-red-600 font-bold text-2xl pointer-events-none z-50';
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+            el.style.transform = 'translate(-50%, -50%)';
+            el.style.transition = 'all 0.5s ease-out';
+            containerEl.appendChild(el);
+            
+            setTimeout(() => {
+                el.style.transform = 'translate(-50%, -100px)';
+                el.style.opacity = '0';
+            }, 10);
+            
+            setTimeout(() => el.remove(), 500);
+        }
+
+        function useHint() {
+            if (!gameState.isPlaying || gameState.hintsLeft <= 0) return;
+            gameState.hintsLeft--;
+            updateUI();
+
+            const ping = document.createElement('div');
+            ping.className = 'hint-ping';
+            ping.style.left = `${gameState.targetX}px`;
+            ping.style.top = `${gameState.targetY}px`;
+            mapEl.appendChild(ping);
+
+            setTimeout(() => ping.remove(), 1500);
+        }
+
+        // --- Camera Control (Pan & Zoom) ---
+        let transform = { x: 0, y: 0, scale: 1 };
+        let isDragging = false;
+        let startPan = { x: 0, y: 0 };
+        let pointerDownPos = { x: 0, y: 0 };
+        let initialPinchDistance = null;
+        let initialScale = 1;
+
+        function updateTransform() {
+            const minX = viewportEl.clientWidth - config.mapWidth * transform.scale;
+            const minY = viewportEl.clientHeight - config.mapHeight * transform.scale;
+            
+            if (minX > 0) transform.x = minX / 2;
+            else transform.x = Math.max(minX, Math.min(0, transform.x));
+            
+            if (minY > 0) transform.y = minY / 2;
+            else transform.y = Math.max(minY, Math.min(0, transform.y));
+
+            mapEl.style.transform = `matrix(${transform.scale}, 0, 0, ${transform.scale}, ${transform.x}, ${transform.y})`;
+        }
+
+        function resetCamera() {
+            const minScale = Math.max(viewportEl.clientWidth / config.mapWidth, viewportEl.clientHeight / config.mapHeight);
+            transform.scale = Math.max(0.5, minScale * 1.5);
+            
+            transform.x = -(config.mapWidth * transform.scale - viewportEl.clientWidth) / 2;
+            transform.y = -(config.mapHeight * transform.scale - viewportEl.clientHeight) / 2;
+            
+            updateTransform();
+        }
+
+        // Mouse & Touch Events
+        viewportEl.addEventListener('pointerdown', (e) => {
+            const local = getLocalCoords(e.clientX, e.clientY);
+            
+            isDragging = true;
+            isDraggingFlag = false;
+            startPan.x = local.x - transform.x;
+            startPan.y = local.y - transform.y;
+            pointerDownPos.x = local.x;
+            pointerDownPos.y = local.y;
+            viewportEl.setPointerCapture(e.pointerId);
+        });
+
+        viewportEl.addEventListener('pointermove', (e) => {
+            if (!isDragging) return;
+            const local = getLocalCoords(e.clientX, e.clientY);
+            
+            if (Math.abs(local.x - pointerDownPos.x) > 5 || Math.abs(local.y - pointerDownPos.y) > 5) {
+                isDraggingFlag = true;
+            }
+
+            transform.x = local.x - startPan.x;
+            transform.y = local.y - startPan.y;
+            updateTransform();
+        });
+
+        viewportEl.addEventListener('pointerup', (e) => {
+            isDragging = false;
+            viewportEl.releasePointerCapture(e.pointerId);
+            
+            // 배경 클릭 오답 처리
+            if (!isDraggingFlag && gameState.isPlaying) {
+                if(e.target === mapEl || e.target === viewportEl) {
+                    const local = getLocalCoords(e.clientX, e.clientY);
+                    gameState.timeLeft -= config.penaltyTime;
+                    flashRed();
+                    updateUI();
+                    showFloatingText("-5초", local.x, local.y);
+                }
+            }
+        });
+
+        // Wheel Zoom
+        viewportEl.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const local = getLocalCoords(e.clientX, e.clientY);
+            const zoomAmount = e.deltaY > 0 ? 0.9 : 1.1;
+            zoom(zoomAmount, local.x, local.y);
+        }, { passive: false });
+
+        // Touch Pinch Zoom
+        viewportEl.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                isDragging = false;
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                initialPinchDistance = Math.hypot(touch1.clientX - touch2.clientX, touch1.clientY - touch2.clientY);
+                initialScale = transform.scale;
+            }
+        }, { passive: false });
+
+        viewportEl.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2 && initialPinchDistance) {
+                e.preventDefault();
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                
+                const dist = Math.hypot(touch1.clientX - touch2.clientX, touch1.clientY - touch2.clientY);
+                const scaleChange = dist / initialPinchDistance;
+                let newScale = initialScale * scaleChange;
+                newScale = Math.max(0.3, Math.min(3, newScale));
+                
+                const local1 = getLocalCoords(touch1.clientX, touch1.clientY);
+                const local2 = getLocalCoords(touch2.clientX, touch2.clientY);
+                const centerX = (local1.x + local2.x) / 2;
+                const centerY = (local1.y + local2.y) / 2;
+                
+                const ratio = newScale / transform.scale;
+                transform.x = centerX - (centerX - transform.x) * ratio;
+                transform.y = centerY - (centerY - transform.y) * ratio;
+                transform.scale = newScale;
+                
+                updateTransform();
+            }
+        }, { passive: false });
+
+        viewportEl.addEventListener('touchend', (e) => {
+            if (e.touches.length < 2) {
+                initialPinchDistance = null;
+            }
+        });
+
+        function zoom(ratio, x, y) {
+            let newScale = transform.scale * ratio;
+            newScale = Math.max(0.3, Math.min(3, newScale)); 
+            
+            const actualRatio = newScale / transform.scale;
+            
+            transform.x = x - (x - transform.x) * actualRatio;
+            transform.y = y - (y - transform.y) * actualRatio;
+            transform.scale = newScale;
+            updateTransform();
+        }
+
+        // --- Event Listeners ---
+        document.getElementById('start-btn').addEventListener('click', startGame);
+        document.querySelectorAll('.restart-btn').forEach(btn => btn.addEventListener('click', startGame));
+        hintBtn.addEventListener('click', useHint);
+        
+        document.getElementById('share-btn').addEventListener('click', () => {
+            const record = document.getElementById('record-time').innerText;
+            const textToShare = `🎣 [진짜 배스는 어디에?] 나는 ${record}초 만에 런커(대물)를 낚았다! 당신의 눈썰미를 테스트해보세요!`;
+            
+            const tempInput = document.createElement("textarea");
+            tempInput.value = textToShare;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            
+            alert('기록이 클립보드에 복사되었습니다. SNS에 붙여넣기 해보세요!');
+        });
+
+        window.addEventListener('resize', () => {
+            updateTransform();
+        });
+
+    </script>
+</body>
+</html>
