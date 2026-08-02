@@ -7,254 +7,303 @@
 <meta name="description" content="오늘의낚시가 매일 자동 발행하는 AI 출조 판정·해양 브리핑 서비스 모음.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&family=Space+Mono:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
-<style>
-/* ==========================================================================
-   오늘의낚시 — 모바일 랜딩 (v2 · "정오의 방파제" 스타일)
-   ========================================================================== */
-:root{
-  --foam-50:#F7FDFF;
-  --foam-100:#E8F6F8;
-  --ink-900:#0E2A38;
-  --ink-600:#4A6B75;
-  --ink-400:#7C97A0;
+<link rel="stylesheet" href="assets/style.css">
 
-  --sea-500:#0E93A6;
-  --sea-400:#3FC6D9;
-  --sea-700:#0A6E7D;
-  --sun-500:#FFB020;
-  --sun-600:#F08A00;
-  --coral-500:#FF6A55;
-
-  --abyss-900:#0A2431;
-  --text-muted-onDark:#3F636E;
-
-  --font-display:'Unbounded',"Noto Sans KR",sans-serif;
-  --font-body:'Noto Sans KR',sans-serif;
-  --font-mono:'Space Mono',monospace;
-
-  --radius-s:14px;
-  --radius-m:22px;
-  --radius-l:32px;
-  --ease:cubic-bezier(.22,.68,.19,1);
+<style id="mobile-hotfix">
+/* Mobile rendering hotfix: prevents the fixed/sticky header from clipping the hero. */
+:root {
+  --mobile-nav-height: 64px;
 }
 
-*,*::before,*::after{box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{
-  margin:0;
-  font-family:var(--font-body);
-  background:var(--foam-50);
-  color:var(--ink-900);
-  -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
-}
-img{max-width:100%;display:block;}
-a{color:inherit;text-decoration:none;}
-ul{margin:0;padding:0;list-style:none;}
-h1,h2,h3{font-family:var(--font-display);margin:0;letter-spacing:-0.01em;font-weight:600;}
-p{margin:0;line-height:1.75;}
-button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
-.container{max-width:560px;margin:0 auto;padding:0 20px;}
-
-.eyebrow{
-  font-family:var(--font-mono);
-  font-size:12px;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  color:var(--sea-700);
-  font-weight:700;
-  background:rgba(14,147,166,0.09);
-  padding:6px 14px 6px 10px;
-  border-radius:999px;
-}
-.eyebrow::before{
-  content:"";
-  width:7px;height:7px;border-radius:50%;
-  background:var(--sun-500);
-  box-shadow:0 0 0 4px rgba(255,176,32,0.22);
-}
-:focus-visible{outline:2px solid var(--sea-500);outline-offset:3px;}
-
-/* ---------- 네비게이션: 유리질 라이트 바 ---------- */
-.nav{
-  position:sticky;top:0;z-index:100;
-  background:rgba(247,253,255,0.72);
-  backdrop-filter:blur(16px) saturate(160%);
-  border-bottom:1px solid rgba(14,42,56,0.08);
-}
-.nav .container{
-  display:flex;align-items:center;justify-content:space-between;
-  height:64px;
-}
-.nav-logo{
-  display:flex;align-items:center;gap:9px;
-  font-family:var(--font-display);
-  font-weight:600;font-size:16px;color:var(--ink-900);
-}
-.nav-logo .dot{
-  width:11px;height:11px;border-radius:40% 60% 55% 45%/50% 45% 55% 50%;
-  background:var(--sun-500);
-  box-shadow:0 0 12px 2px rgba(255,176,32,0.5);
-}
-.nav-badge{
-  font-family:var(--font-mono);font-size:11px;font-weight:700;
-  color:var(--sea-700);background:rgba(14,147,166,0.1);
-  padding:6px 12px;border-radius:999px;letter-spacing:.06em;
+html {
+  width: 100%;
+  overflow-x: hidden;
+  scroll-padding-top: calc(var(--mobile-nav-height) + env(safe-area-inset-top));
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
-/* ---------- 밝은 "물 위" 히어로 ---------- */
-.hero{
-  background:
-    radial-gradient(60% 50% at 82% 8%,rgba(255,255,255,0.9) 0%,rgba(255,255,255,0) 60%),
-    linear-gradient(168deg,#EAFBFF 0%,#CFF1F8 30%,#8FDCEA 62%,#3FB6CE 100%);
-  position:relative;
-  overflow:hidden;
-  padding:52px 0 96px;
-}
-.hero::after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background-image:
-    radial-gradient(2.5px 2.5px at 12% 22%,rgba(255,255,255,0.9),transparent),
-    radial-gradient(2px 2px at 32% 64%,rgba(255,255,255,0.75),transparent),
-    radial-gradient(3px 3px at 68% 30%,rgba(255,255,255,0.85),transparent),
-    radial-gradient(2px 2px at 84% 70%,rgba(255,255,255,0.7),transparent),
-    radial-gradient(2.5px 2.5px at 55% 85%,rgba(255,255,255,0.8),transparent);
-  background-repeat:no-repeat;
-}
-.hero .container{position:relative;z-index:1;}
-.hero h1{
-  font-size:clamp(26px,7vw,36px);
-  line-height:1.32;
-  margin:18px 0 16px;
-}
-.hero h1 .accent{color:var(--sea-700);}
-.hero p{
-  font-size:15px;color:var(--text-muted-onDark);
-  max-width:440px;
-}
-.hero-stats{display:flex;gap:26px;flex-wrap:wrap;margin-top:28px;}
-.hero-stat b{
-  font-family:var(--font-mono);font-size:21px;color:var(--sea-700);display:block;
-}
-.hero-stat span{font-size:12px;color:var(--ink-600);}
-.wave-cut{
-  position:absolute;left:0;right:0;bottom:-1px;width:100%;height:56px;
-  display:block;z-index:2;
+body {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  overflow-x: hidden;
 }
 
-/* ---------- 데이터 티커 (딥존) ---------- */
-.ticker-strip{
-  background:var(--abyss-900);
-  padding:12px 0;overflow:hidden;
-}
-.ticker-track{display:flex;width:max-content;animation:scroll-x 30s linear infinite;}
-.ticker-track span{
-  font-family:var(--font-mono);font-size:12px;color:#9FC3CB;
-  padding:0 24px;white-space:nowrap;border-right:1px solid rgba(255,255,255,0.1);
-}
-.ticker-track span b{color:var(--sun-500);font-weight:700;}
-@keyframes scroll-x{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-
-/* ---------- 섹션 공통 ---------- */
-.section{padding:64px 0;}
-.section-head{margin:0 0 36px;}
-.section-head h2{
-  font-size:clamp(21px,5.4vw,27px);margin:14px 0 12px;line-height:1.4;
-}
-.section-head p{color:var(--ink-600);font-size:14.5px;}
-
-/* ---------- 서비스 카드 (모바일 1열) ---------- */
-.demo-grid{display:grid;grid-template-columns:1fr;gap:20px;}
-.demo-card{
-  background:#fff;border-radius:var(--radius-m);overflow:hidden;
-  border:1px solid rgba(14,42,56,0.08);cursor:zoom-in;
-  transition:transform .25s var(--ease),box-shadow .25s;
-}
-.demo-card:hover{transform:translateY(-6px) rotate(-0.6deg);box-shadow:0 24px 44px -20px rgba(14,42,56,0.25);}
-.demo-card figure{margin:0;aspect-ratio:4/3.1;overflow:hidden;background:var(--abyss-900);}
-.demo-card img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .5s var(--ease);}
-.demo-card:hover img{transform:scale(1.06);}
-.demo-cap{padding:16px 18px 18px;}
-.demo-cap .tag{font-family:var(--font-mono);font-size:11px;color:var(--sea-700);letter-spacing:.06em;font-weight:700;}
-.demo-cap h3{font-size:16.5px;margin:6px 0 6px;}
-.demo-cap p{font-size:13px;color:var(--ink-600);}
-
-.section.alt{background:var(--foam-100);}
-
-/* ---------- Behind 섹션 (물 위 톤) ---------- */
-.behind{
-  background:
-    radial-gradient(60% 50% at 82% 8%,rgba(255,255,255,0.9) 0%,rgba(255,255,255,0) 60%),
-    linear-gradient(168deg,#EAFBFF 0%,#CFF1F8 40%,#8FDCEA 100%);
-  padding:70px 0;
-}
-.behind h2{font-size:clamp(21px,5.4vw,27px);margin:14px 0 14px;line-height:1.45;}
-.behind .lede{color:var(--text-muted-onDark);font-size:14.5px;margin-bottom:28px;}
-.info-table{width:100%;border-collapse:collapse;background:rgba(255,255,255,0.55);border-radius:var(--radius-s);overflow:hidden;}
-.info-table tr{border-bottom:1px solid rgba(14,42,56,0.1);}
-.info-table tr:last-child{border-bottom:none;}
-.info-table td{padding:14px 14px;font-size:13.5px;vertical-align:top;}
-.info-table td:first-child{width:92px;color:var(--sea-700);font-weight:700;font-family:var(--font-mono);font-size:12px;}
-.info-table td:last-child{color:var(--text-muted-onDark);}
-
-/* ---------- 최종 CTA ---------- */
-.final-cta{
-  text-align:center;padding:80px 24px 76px;position:relative;z-index:1;
-  background:
-    radial-gradient(60% 50% at 82% 8%,rgba(255,255,255,0.9) 0%,rgba(255,255,255,0) 60%),
-    linear-gradient(168deg,#EAFBFF 0%,#CFF1F8 30%,#8FDCEA 62%,#3FB6CE 100%);
-}
-.final-cta h2{font-size:clamp(23px,6vw,32px);color:var(--ink-900);margin-bottom:16px;line-height:1.4;}
-.final-cta p{color:var(--text-muted-onDark);font-size:15px;margin-bottom:30px;}
-.btn{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:15px 28px;border-radius:999px;
-  font-weight:700;font-size:15px;
-  transition:transform .2s var(--ease),box-shadow .2s,background .2s;
-}
-.btn-primary{
-  background:var(--sun-500);color:var(--ink-900);
-  box-shadow:0 10px 26px rgba(255,176,32,0.4);
-}
-.btn-primary:hover{transform:translateY(-2px) rotate(-1deg);box-shadow:0 14px 30px rgba(255,176,32,0.5);}
-
-/* ---------- 푸터 (딥존) ---------- */
-.footer{background:var(--abyss-900);color:#9FC3CB;padding:40px 0 30px;}
-.footer .container{display:flex;flex-direction:column;align-items:flex-start;gap:14px;}
-.footer .nav-logo{color:#fff;}
-.footer small{font-size:12px;opacity:.75;}
-
-/* ---------- 라이트박스 ---------- */
-.lightbox{
-  position:fixed;inset:0;background:rgba(10,36,49,0.9);z-index:1000;
-  display:flex;align-items:center;justify-content:center;padding:24px;
-  opacity:0;pointer-events:none;transition:opacity .25s;
-}
-.lightbox.open{opacity:1;pointer-events:auto;}
-.lightbox img{max-width:min(640px,92vw);max-height:84vh;border-radius:var(--radius-m);box-shadow:0 40px 100px rgba(0,0,0,.6);}
-.lightbox-close{
-  position:absolute;top:20px;right:20px;color:#fff;font-size:14px;
-  border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:8px 16px;font-family:var(--font-mono);
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-/* ---------- 스크롤 리빌 ---------- */
-.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
-.reveal.in{opacity:1;transform:translateY(0);}
+img, svg, video {
+  max-width: 100%;
+  height: auto;
+}
 
-@media (min-width:720px){
-  .container{max-width:1080px;padding:0 24px;}
-  .demo-grid{grid-template-columns:repeat(2,1fr);}
-  .wave-cut{height:88px;}
+.container,
+.hero-grid,
+.feature-layout,
+.trust-layout,
+.mobile-layout,
+.split-block,
+.demo-grid,
+.problem-grid,
+.fact-strip {
+  min-width: 0;
 }
-@media (min-width:1024px){
-  .demo-grid{grid-template-columns:repeat(3,1fr);}
+
+.nav {
+  top: 0;
+  z-index: 1000;
+  padding-top: env(safe-area-inset-top);
 }
-@media (prefers-reduced-motion:reduce){
-  *{animation-duration:0.001ms !important;animation-iteration-count:1 !important;transition-duration:0.001ms !important;}
-  html{scroll-behavior:auto;}
+
+.nav > .container {
+  min-height: var(--mobile-nav-height);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --mobile-nav-height: 60px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: none;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .nav {
+    position: sticky;
+    width: 100%;
+    background: rgba(247, 253, 255, 0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .nav > .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: var(--mobile-nav-height);
+  }
+
+  .nav-logo {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    flex: 0 1 auto;
+    min-width: 0;
+    font-size: 18px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-links.is-open {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 10px 20px 18px;
+    background: rgba(247, 253, 255, 0.98);
+    border-top: 1px solid rgba(11, 33, 49, 0.08);
+    box-shadow: 0 16px 24px rgba(11, 33, 49, 0.10);
+  }
+
+  .nav-links.is-open a {
+    display: block;
+    padding: 12px 4px;
+  }
+
+  .nav-burger {
+    position: relative;
+    z-index: 2;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    padding: 9px;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    border: 0;
+    background: transparent;
+  }
+
+  .nav-burger span {
+    width: 100%;
+    height: 3px;
+    border-radius: 999px;
+    transform-origin: center;
+  }
+
+  .hero {
+    min-height: auto;
+    padding-top: 46px;
+    padding-bottom: 100px;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 42px;
+    align-items: start;
+  }
+
+  .hero-grid > * {
+    min-width: 0;
+  }
+
+  .hero h1 {
+    margin-top: 24px;
+    font-size: clamp(36px, 10.5vw, 54px);
+    line-height: 1.16;
+    letter-spacing: -0.055em;
+    word-break: keep-all;
+    overflow-wrap: normal;
+  }
+
+  .hero .lede {
+    font-size: 17px;
+    line-height: 1.85;
+    word-break: keep-all;
+  }
+
+  .hero-kicker {
+    max-width: 100%;
+    font-size: 14px;
+    white-space: normal;
+  }
+
+  .hero-actions,
+  .btn-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .hero-actions .btn,
+  .btn-group .btn {
+    width: 100%;
+    min-height: 52px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .hero-stat b {
+    font-size: clamp(25px, 7vw, 34px);
+  }
+
+  .hero-stat span {
+    font-size: 13px;
+    line-height: 1.45;
+    word-break: keep-all;
+  }
+
+  .gauge-card {
+    width: 100%;
+    margin: 0;
+    padding: 24px 20px 18px;
+    border-radius: 28px;
+  }
+
+  .gauge-top,
+  .gauge-foot {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .gauge-dial {
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .gauge-meta {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .section {
+    padding-top: 76px;
+    padding-bottom: 76px;
+  }
+
+  .problem-grid,
+  .demo-grid,
+  .feature-layout,
+  .trust-layout,
+  .mobile-layout,
+  .split-block {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fact-strip {
+    flex-direction: column;
+  }
+
+  .phone-stack {
+    width: min(100%, 420px);
+    margin-inline: auto;
+  }
+
+  .ticker-track {
+    will-change: transform;
+  }
+}
+
+@media (max-width: 420px) {
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .hero {
+    padding-top: 34px;
+  }
+
+  .hero h1 {
+    font-size: clamp(32px, 10vw, 43px);
+  }
+
+  .hero-stats {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .hero-stat {
+    display: grid;
+    grid-template-columns: 76px 1fr;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .hero-stat span {
+    font-size: 14px;
+  }
+
+  .gauge-meta {
+    gap: 6px;
+  }
+
+  .gauge-meta b {
+    font-size: 17px;
+  }
 }
 </style>
 </head>
