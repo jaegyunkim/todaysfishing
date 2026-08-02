@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI 해양 정보 서비스 랜딩 페이지</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <style>
+        body { 
+            font-family: 'Pretendard', sans-serif; 
+            background-color: #f3f4f6; /* 바탕 배경색 (데스크톱 뷰용) */
+        }
+        
+        /* 스크롤 시 부드럽게 나타나는 애니메이션 클래스 */
+        .reveal { 
+            opacity: 0; 
+            transform: translateY(40px); 
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); 
+        }
+        .reveal.active { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+        
+        /* 이미지(앱 화면) 그림자 효과 */
+        .mockup-shadow { 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0px 20px 0px rgba(0,0,0,0.05); 
+        }
+        
+        /* 스크롤바 숨기기 (모바일 뷰 최적화) */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased no-scrollbar">
+
+<!-- 모바일 뷰어 컨테이너 (최대 너비 고정으로 모바일 느낌 유지) -->
+<main class="max-w-[480px] mx-auto bg-white min-h-screen relative shadow-2xl overflow-x-hidden pb-24">
+    
+    <!-- 헤더 / 히어로 섹션 -->
+    <header class="bg-gradient-to-b from-[#0F293E] to-[#153143] text-white p-6 pt-16 pb-20 rounded-b-[40px] relative z-10">
+        <div class="animate-[fadeIn_1s_ease-out_forwards]">
+            <p class="text-teal-400 font-bold mb-3 tracking-wider text-sm flex items-center gap-2">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
+                SEALINK & 오늘의낚시
+            </p>
+            <h1 class="text-3xl font-extrabold leading-tight mb-5 tracking-tight">
+                AI가 분석하는<br>
+                <span class="text-teal-300">완벽한 출조 타이밍</span>
+            </h1>
+            <p class="text-gray-300 text-[15px] leading-relaxed mb-6 opacity-90">
+                복잡한 해양 데이터부터 AI 출조 판정까지,<br>
+                성공적이고 안전한 낚시를 위한<br>모든 정보를 한 곳에서 확인하세요.
+            </p>
+        </div>
+    </header>
+
+    <!-- Point 1 & 2 (어두운 배경 테마 유지) -->
+    <section class="bg-[#153143] py-16 px-6 -mt-10 pt-24 relative z-0">
+        <div class="space-y-20">
+            <!-- 1. AI출조 결정 브리핑 -->
+            <article class="reveal flex flex-col items-center">
+                <div class="text-center mb-6 w-full flex flex-col items-center">
+                    <span class="px-3 py-1 bg-[#1E435C] text-teal-300 rounded-full text-[11px] font-bold tracking-widest mb-3 border border-[#2A526D]">POINT 01</span>
+                    <h2 class="text-2xl font-bold text-white mb-2">AI출조 결정 브리핑</h2>
+                    <p class="text-gray-400 text-sm">핵심 데이터 기반의 낚시 최적기 안내</p>
+                </div>
+                <img src="1.jpg" alt="AI출조 결정 브리핑 화면" class="w-full rounded-2xl mockup-shadow border border-gray-700/50 object-cover bg-gray-800">
+            </article>
+
+            <!-- 2. AI출조 판정 브리핑 -->
+            <article class="reveal flex flex-col items-center">
+                <div class="text-center mb-6 w-full flex flex-col items-center">
+                    <span class="px-3 py-1 bg-[#1E435C] text-teal-300 rounded-full text-[11px] font-bold tracking-widest mb-3 border border-[#2A526D]">POINT 02</span>
+                    <h2 class="text-2xl font-bold text-white mb-2">AI출조 판정 브리핑</h2>
+                    <p class="text-gray-400 text-sm">지역별 상세 점수와 위험 요소 분석</p>
+                </div>
+                <img src="2.jpg" alt="AI출조 판정 브리핑 화면" class="w-full rounded-2xl mockup-shadow border border-gray-700/50 object-cover bg-gray-800">
+            </article>
+        </div>
+    </section>
+
+    <!-- Point 3 (밝은 민트톤 전환) -->
+    <section class="bg-[#F0FDF4] py-16 px-6 rounded-t-[40px] -mt-10 relative z-20 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)]">
+         <article class="reveal flex flex-col items-center">
+            <div class="text-center mb-6 w-full flex flex-col items-center">
+                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[11px] font-bold tracking-widest mb-3">POINT 03</span>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">SeaLink 해양 브리핑</h2>
+                <p class="text-gray-600 text-sm">지식 그래프를 활용한 통합 액티비티 지수</p>
+            </div>
+            <img src="3.png" alt="SeaLink 해양 브리핑 화면" class="w-full rounded-2xl mockup-shadow border border-white bg-white">
+        </article>
+    </section>
+
+    <!-- Point 4 & 5 (화이트 배경) -->
+    <section class="bg-white py-16 px-6 relative z-10">
+        <div class="space-y-20">
+            <!-- 4. 바다낚시 지수 예측 -->
+            <article class="reveal flex flex-col items-center">
+                <div class="text-center mb-6 w-full flex flex-col items-center">
+                    <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[11px] font-bold tracking-widest mb-3">POINT 04</span>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">바다낚시 지수 예측</h2>
+                    <p class="text-gray-500 text-sm">대상어종에 맞춘 핀포인트 지수 제공</p>
+                </div>
+                <img src="4.png" alt="바다낚시 지수 예측 화면" class="w-full rounded-2xl mockup-shadow border border-gray-100 bg-gray-50">
+            </article>
+
+            <!-- 5. 전국해상 날씨 예측 -->
+            <article class="reveal flex flex-col items-center">
+                <div class="text-center mb-6 w-full flex flex-col items-center">
+                    <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[11px] font-bold tracking-widest mb-3">POINT 05</span>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">전국해상 날씨 예측</h2>
+                    <p class="text-gray-500 text-sm">전국 권역별 해상 날씨를 한눈에 파악</p>
+                </div>
+                <img src="5.png" alt="전국해상 날씨 예측 화면" class="w-full rounded-2xl mockup-shadow border border-gray-100 bg-gray-50">
+            </article>
+        </div>
+    </section>
+
+    <!-- Point 6 & 7 (연한 회색 배경) -->
+    <section class="bg-[#F8FAFC] py-16 px-6">
+        <div class="space-y-20">
+            <!-- 6. 실시간 해양관측소 -->
+            <article class="reveal flex flex-col items-center">
+                <div class="text-center mb-6 w-full flex flex-col items-center">
+                    <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[11px] font-bold tracking-widest mb-3">POINT 06</span>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">실시간 해양관측소</h2>
+                    <p class="text-gray-500 text-sm">정확한 실시간 풍속, 파고, 수온 관측 정보</p>
+                </div>
+                <img src="6.png" alt="실시간 해양관측소 화면" class="w-full rounded-2xl mockup-shadow border border-gray-200 bg-white">
+            </article>
+
+            <!-- 7. 실측예측 조위관측소 -->
+            <article class="reveal flex flex-col items-center">
+                <div class="text-center mb-6 w-full flex flex-col items-center">
+                    <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[11px] font-bold tracking-widest mb-3">POINT 07</span>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">실측예측 조위관측소</h2>
+                    <p class="text-gray-500 text-sm">시간대별 조석 간만의 차이와 물때 정보</p>
+                </div>
+                <img src="7.png" alt="실측예측 조위관측소 화면" class="w-full rounded-2xl mockup-shadow border border-gray-200 bg-white">
+            </article>
+        </div>
+    </section>
+
+    <!-- Point 8 & Footer -->
+    <section class="bg-white py-16 px-6">
+        <!-- 8. 선박운항 지수 예측 -->
+        <article class="reveal flex flex-col items-center mb-20">
+            <div class="text-center mb-6 w-full flex flex-col items-center">
+                <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[11px] font-bold tracking-widest mb-3">POINT 08</span>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">선박운항 지수 예측</h2>
+                <p class="text-gray-500 text-sm">안전한 해상 이동을 위한 선박 운항 정보</p>
+            </div>
+            <img src="8.png" alt="선박운항 지수 예측 화면" class="w-full rounded-2xl mockup-shadow border border-gray-100 bg-gray-50">
+        </article>
+
+        <footer class="text-center pt-10 border-t border-gray-100">
+            <p class="text-gray-400 text-xs leading-relaxed">
+                본 서비스의 데이터는 AI 및 예측 모델에 의한 결과로,<br>실제 기상 상황과 다를 수 있습니다. 출조 시 반드시 주의하세요.
+            </p>
+            <p class="mt-4 text-gray-300 text-[10px] uppercase font-bold tracking-widest">&copy; 2026 SeaLink & 오늘의낚시.</p>
+        </footer>
+    </section>
+
+    <!-- 하단 고정 CTA 버튼 -->
+    <div class="fixed bottom-0 left-0 w-full z-50 pointer-events-none">
+        <!-- 그라데이션 오버레이로 버튼 뒤 텍스트 가독성 확보 -->
+        <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
+        
+        <div class="max-w-[480px] mx-auto flex justify-center pointer-events-auto px-6 pb-6 relative z-10">
+            <a href="https://www.instagram.com/todaysfishing_official" target="_blank" rel="noopener noreferrer" class="w-full bg-[#132E41] hover:bg-[#0F293E] text-white font-bold text-lg py-4 rounded-2xl shadow-[0_10px_20px_rgba(19,46,65,0.3)] transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2 decoration-none">
+                <span>오늘의낚시</span>
+                <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </a>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Scroll Reveal Animation 처리
+        const reveals = document.querySelectorAll('.reveal');
+        
+        // Intersection Observer 설정
+        const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    // 화면에 요소가 나타나면 active 클래스 추가
+                    entry.target.classList.add('active');
+                    // 한번 나타난 요소는 관찰 해제
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.15, // 요소가 15% 보일 때 트리거
+            rootMargin: "0px 0px -50px 0px" // 하단 마진을 주어 조금 더 일찍 나타나게 조정
+        });
+
+        reveals.forEach(reveal => {
+            revealOnScroll.observe(reveal);
+        });
+    });
+</script>
+</body>
+</html>
