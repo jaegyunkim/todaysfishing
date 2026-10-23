@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#062d35">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="공공데이터를 이해하기 쉬운 연안 안전정보로. 오늘의낚시 AI 연안 안전 에이전트의 기술과 공공 협력 모델을 소개합니다.">
+  <title>오늘의낚시 — 24시간 잠들지 않는 AI 연안 안전 에이전트</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="site-content.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 20 6v6c0 4-4 7-8 9-4-2-8-5-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2"/></symbol>
+      <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2 8c4-5 6 5 10 0s6 5 10 0M2 14c4-5 6 5 10 0s6 5 10 0M2 20c4-5 6 5 10 0s6 5 10 0"/></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5l-2 3Zm5 4h4M12 2v2"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 3"/></symbol>
+      <symbol id="i-map" viewBox="0 0 24 24"><path d="m3 5 6-2 6 3 6-2v15l-6 2-6-3-6 2V5Zm6-2v15m6-12v15"/></symbol>
+      <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 7h4l2-3h6l2 3h4v13H3V7Z"/><circle cx="12" cy="13" r="4"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M7 16v-5m5 5V6m5 10v-8"/></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="m3 3 18 9-18 9 4-9-4-9Zm4 9h14"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+      <symbol id="i-expand" viewBox="0 0 24 24"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5"/></symbol>
+    </defs>
+  </svg>
+
+  <header class="site-header">
+    <div class="container nav-row">
+      <a class="brand" href="#top" aria-label="오늘의낚시 첫 화면"><span class="brand-mark"><svg class="icon"><use href="#i-wave"/></svg></span><span data-brand>오늘의낚시</span><span class="brand-tag">COASTAL SAFETY</span></a>
+      <nav class="navigation" id="navigation" aria-label="주 내비게이션">
+        <a href="#solution">서비스 소개</a><a href="#features">핵심 기능</a><a href="#technology">기술 구조</a><a href="#public-model">공공 협력</a>
+        <button class="nav-cta" type="button" data-inquiry>도입 문의 <span aria-hidden="true">↗</span></button>
+      </nav>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="navigation" aria-label="메뉴 열기"><span></span><span></span></button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero dark" id="top" aria-labelledby="hero-title">
+      <div class="hero-contours" aria-hidden="true"></div>
+      <div class="container hero-layout">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="status-dot"></span><span data-hero-eyebrow>공공데이터로 지키는 연안의 일상</span></p>
+          <h1 id="hero-title" data-hero-title>바다로 가는 설렘,<br>안전하게 돌아올<br><span>약속까지.</span></h1>
+          <p class="hero-description" data-hero-description>24시간 잠들지 않는 AI 연안 안전 에이전트.<br>흩어진 해양·기상 데이터를 모아, 누구나 이해할 수 있는 안전한 행동으로 바꿉니다.</p>
+          <div class="hero-actions"><a class="button primary" href="#solution"><span data-primary-label>안전 에이전트 알아보기</span><svg class="icon"><use href="#i-arrow"/></svg></a><a class="text-button" href="#briefings"><span data-secondary-label>해양 브리핑 보기</span><svg class="icon"><use href="#i-arrow"/></svg></a></div>
+          <div class="hero-meta"><span><svg class="icon"><use href="#i-shield"/></svg>안전 규칙 우선</span><span>설명 가능한 판정</span><span>국민 무료 제공 원칙</span></div>
+        </div>
+        <div class="hero-visual">
+          <div class="visual-label"><span>COASTAL SAFETY BRIEF</span><span class="sample-tag">서비스 개념 예시</span></div>
+          <article class="safety-card" aria-labelledby="safety-title">
+            <div class="card-location"><span class="icon-box"><svg class="icon"><use href="#i-pin"/></svg></span><div><small>남해 연안 · 예시 포인트</small><h2 id="safety-title">출발 전, 안전부터.</h2></div><svg class="icon location-arrow"><use href="#i-arrow"/></svg></div>
+            <div class="risk-display" data-risk-display>
+              <div class="risk-ring"><svg class="icon"><use href="#i-shield"/></svg></div>
+              <div><span class="risk-caption">연안 활동 위험도</span><strong id="risk-level">주의</strong><p id="risk-summary">현장 상태를 확인한 뒤 활동하세요.</p></div>
+            </div>
+            <div class="conditions"><div><svg class="icon"><use href="#i-wave"/></svg><span>파고</span><b id="condition-wave">변동 가능</b></div><div><svg class="icon"><use href="#i-send"/></svg><span>바람</span><b id="condition-wind">현장 확인</b></div><div><svg class="icon"><use href="#i-map"/></svg><span>출입통제</span><b id="condition-access">별도 확인</b></div></div>
+            <div class="risk-action"><svg class="icon"><use href="#i-check"/></svg><span id="risk-action-text">구명조끼 착용 · 물때와 귀가 시간 확인</span></div>
+            <div class="scenario-controls" role="group" aria-label="안전 단계 화면 예시 선택"><span>단계 예시</span><button type="button" data-risk="safe" aria-pressed="false">안전</button><button type="button" data-risk="caution" aria-pressed="true">주의</button><button type="button" data-risk="alert" aria-pressed="false">경계</button><button type="button" data-risk="danger" aria-pressed="false">위험</button></div>
+            <p class="sample-note">예시 화면입니다. 실시간 관측값·실제 안전 판정이 아닙니다.</p>
+          </article>
+          <div class="visual-foot"><span class="tiny-line"></span><span>숫자를 넘어, 필요한 행동으로.</span><span class="mono">01 / SAFETY FIRST</span></div>
+        </div>
+      </div>
+      <div class="container proof-strip"><div><strong>24/7</strong><span>무인 데이터·콘텐츠 운영 기반</span></div><div><strong>5종</strong><span>공공데이터 자동화 파이프라인</span></div><div><strong>3단</strong><span>설명 · 지식 · 규칙의 역할 분리</span></div><p>운영 현황은 제공 PDF에<br>기재된 내용 기준입니다.</p></div>
+    </section>
+
+    <div class="data-strip"><div class="container"><span>PUBLIC DATA, CLEAR ACTION.</span><p>기상청 <i>·</i> 국립해양조사원 <i>·</i> 공공데이터포털 <i>→</i> 한눈에 이해하는 연안 안전</p></div></div>
+
+    <section class="section problem" id="problem">
+      <div class="container">
+        <div class="section-heading split-heading"><div><p class="eyebrow teal">01 / THE PROBLEM</p><h2>정보는 많아도,<br>위험은 보이지 않습니다.</h2></div><p>파고, 물때, 기상특보, 통제구역.<br>기관마다 흩어진 숫자를 현장에서 해석하는 일은<br>이용자 혼자 감당하기 어렵습니다.</p></div>
+        <div class="problem-list"><article><span class="problem-number">01</span><div><h3>흩어진 공공정보</h3><p>지역과 날짜를 바꿔 여러 기관을 반복 검색해야 합니다.</p></div><svg class="icon"><use href="#i-layers"/></svg></article><article><span class="problem-number">02</span><div><h3>현장에서 놓치는 위험</h3><p>물때와 위험지형을 모르는 방문객에게 숫자만으로는 부족합니다.</p></div><svg class="icon"><use href="#i-pin"/></svg></article><article><span class="problem-number">03</span><div><h3>사고 이후에 집중된 대응</h3><p>구조만큼 중요한 것은, 위험에 닿기 전에 행동을 바꾸는 일입니다.</p></div><svg class="icon"><use href="#i-clock"/></svg></article></div>
+        <aside class="problem-callout"><span class="callout-line"></span><p>사고 예방을 개인의 노력에서<br><strong>누구나 이용하는 공공 안전 인프라로.</strong></p><span class="mono">OUR MISSION</span></aside>
+      </div>
+    </section>
+
+    <section class="section solution" id="solution">
+      <div class="container solution-layout">
+        <div class="section-heading"><p class="eyebrow teal">02 / THE SOLUTION</p><h2>복잡한 데이터는 뒤로.<br><span class="teal-text">안전한 행동은 앞으로.</span></h2><p>오늘의낚시는 공공데이터를 수집하고, 검증된 지식과 규칙으로 위험을 판단하는 연안 안전서비스를 지향합니다. AI는 그 근거를 이해하기 쉬운 말로 설명합니다.</p><a class="text-button dark-text" href="#features">내게 필요한 안전 기능 <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+        <div class="solution-flow"><article><span class="flow-icon"><svg class="icon"><use href="#i-layers"/></svg></span><div><small>COLLECT</small><h3>흩어진 데이터를 모으고</h3><p>기상 · 파고 · 조석 · 통제 · 사고이력</p></div><span class="flow-number">1</span></article><span class="flow-connector" aria-hidden="true"></span><article><span class="flow-icon"><svg class="icon"><use href="#i-shield"/></svg></span><div><small>ASSESS</small><h3>근거로 위험을 판단하고</h3><p>검증된 지식DB + 안전 규칙</p></div><span class="flow-number">2</span></article><span class="flow-connector" aria-hidden="true"></span><article class="flow-highlight"><span class="flow-icon"><svg class="icon"><use href="#i-bell"/></svg></span><div><small>ACT</small><h3>필요한 행동을 안내합니다</h3><p>위험 단계 · 행동요령 · 판정 근거</p></div><span class="flow-number">3</span></article></div>
+      </div>
+    </section>
+
+    <section class="section features" id="features">
+      <div class="container">
+        <div class="section-heading split-heading"><div><p class="eyebrow teal">03 / SAFETY, TOGETHER</p><h2>바다에 있는 사람부터,<br>지역을 지키는 사람까지.</h2></div><div class="heading-aside"><p>안전을 개인과 행정이 함께 만드는<br>공공서비스 기능 구상입니다.</p><div class="feature-tabs" role="tablist" aria-label="이용 대상"><button id="citizen-tab" role="tab" aria-selected="true" aria-controls="citizen-panel" tabindex="0">국민을 위한 안전</button><button id="agency-tab" role="tab" aria-selected="false" aria-controls="agency-panel" tabindex="-1">지자체를 위한 운영</button></div></div></div>
+        <div id="citizen-panel" role="tabpanel" aria-labelledby="citizen-tab" class="feature-panel">
+          <article class="feature-card feature-wide"><span class="feature-icon"><svg class="icon"><use href="#i-bell"/></svg></span><span class="feature-index">01</span><h3>내 상황에 맞는 위험 알림</h3><p>위치·시간·기상·파고·조석·일몰을 함께 고려해 안전·주의·경계·위험으로 안내합니다.</p><div class="mini-notification"><span class="notification-dot"></span><div><b>위험을 알리는 것을 넘어</b><span>지금 필요한 행동요령까지.</span></div><svg class="icon"><use href="#i-arrow"/></svg></div><span class="development-label">개인화 알림 확장 구상</span></article>
+          <article class="feature-card"><span class="feature-icon"><svg class="icon"><use href="#i-clock"/></svg></span><span class="feature-index">02</span><h3>안전 체크인·아웃</h3><p>출조 장소와 귀가 예정시간을 등록하고, 예정시간 초과 시 본인 확인 후 보호자에게 단계별로 알리는 흐름입니다.</p><div class="mini-steps"><span>장소 등록</span><i>→</i><span>활동</span><i>→</i><span>귀가 확인</span></div><span class="development-label">서비스 기능 구상</span></article>
+          <article class="feature-card"><span class="feature-icon"><svg class="icon"><use href="#i-map"/></svg></span><span class="feature-index">03</span><h3>지역 위험지도</h3><p>사고 다발지·통제구역·구명장비·대피로·접근정보를 한 지도에. 판정 근거와 갱신시간도 함께 확인합니다.</p><div class="map-labels"><span>통제구역</span><span>구명장비</span><span>대피로</span></div><span class="development-label">서비스 기능 구상</span></article>
+          <article class="feature-card feature-wide report-card"><span class="feature-icon"><svg class="icon"><use href="#i-camera"/></svg></span><span class="feature-index">04</span><h3>주민이 발견하고, 지역이 해결하는 위험</h3><p>월파·낙석·파손시설·미끄럼 등 현장 위험을 사진과 위치로 접수합니다. 지자체 검증을 거쳐 공공 알림과 시설개선으로 연결합니다.</p><div class="report-chips"><span>현장 제보</span><svg class="icon"><use href="#i-arrow"/></svg><span>지자체 검증</span><svg class="icon"><use href="#i-arrow"/></svg><span>알림·시설개선</span></div><span class="development-label">주민 참여형 기능 구상</span></article>
+        </div>
+        <div id="agency-panel" role="tabpanel" aria-labelledby="agency-tab" class="feature-panel agency-panel" hidden>
+          <article class="feature-card"><span class="feature-icon"><svg class="icon"><use href="#i-chart"/></svg></span><span class="feature-index">05</span><h3>지역 안전 운영 대시보드</h3><p>위험구역 등록, 이용자 밀집도 확인, 대상별 알림, 제보 처리와 통계보고를 통합하는 기관용 운영 체계입니다.</p><ul class="plain-list"><li>지역별 위험구역 관리</li><li>제보 검증과 처리 이력</li><li>알림 대상·운영 통계 관리</li></ul><span class="development-label">지자체 실증·도입 구상</span></article>
+          <article class="feature-card"><span class="feature-icon"><svg class="icon"><use href="#i-send"/></svg></span><span class="feature-index">06</span><h3>소셜미디어 공공 알림</h3><p>카드뉴스·숏폼으로 재구성한 안전정보를 일상 속에서 반복 전달합니다. 기존 콘텐츠 운영 기반에 특보·안전공지를 결합하는 방향입니다.</p><div class="social-labels"><span>카드뉴스</span><span>숏폼</span><span>계절별 안전 콘텐츠</span></div><span class="development-label">기존 발행 기반 + 안전알림 고도화</span></article>
+        </div>
+        <p class="section-note">이 페이지는 기능을 소개하는 정적 시안입니다. 위치 수집·체크인 저장·제보 접수·알림 전송은 동작하지 않습니다.</p>
+
+        <div class="briefings-block" id="briefings">
+          <div class="briefing-heading"><div><p class="eyebrow teal">FROM DATA TO DAILY LIFE</p><h3>이미 시작된 해양 브리핑.</h3><p>참고 사이트의 기존 발행 카드입니다. 이미지를 눌러 자세히 살펴보세요.</p></div><span class="archive-badge">과거 발행 예시 · 2026.09</span></div>
+          <div class="briefing-filters" role="group" aria-label="브리핑 종류 필터"><button type="button" data-filter="all" aria-pressed="true">전체</button><button type="button" data-filter="safety" aria-pressed="false">출조·안전</button><button type="button" data-filter="forecast" aria-pressed="false">지수·예보</button><button type="button" data-filter="observation" aria-pressed="false">실측·관측</button></div>
+          <div class="briefing-grid" id="briefing-grid"></div>
+          <noscript><p>브리핑 목록과 화면 예시 전환은 JavaScript를 켜면 이용할 수 있습니다.</p></noscript>
+          <p class="section-note">카드의 날짜와 수치는 과거 예시입니다. 현재 기상 또는 출조 판단에 사용하지 마세요.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section dark technology" id="technology">
+      <div class="container">
+        <div class="section-heading split-heading"><div><p class="eyebrow">04 / TRUST BY DESIGN</p><h2>설명은 AI가.<br><span>판정은 검증된 규칙이.</span></h2></div><p>AI가 안전 기준을 임의로 바꾸지 않도록<br>설명, 지식, 판정의 역할을 분리합니다.<br>같은 조건에는 같은 답을 지향합니다.</p></div>
+        <div class="architecture"><article><span class="architecture-number">01</span><small>UNDERSTAND & EXPLAIN</small><h3>듣고 설명하는 AI</h3><p>자연어 질문과 후기를 이해하고,<br>판정 근거를 쉬운 말로 전달합니다.</p><span class="architecture-tag">이해 · 설명</span></article><article><span class="architecture-number">02</span><small>VERIFIED KNOWLEDGE</small><h3>검증된 지식DB</h3><p>포인트·어종·지형·위험요소를<br>온톨로지로 연결합니다.</p><span class="architecture-tag">지식 · 관계 · 출처</span></article><article class="rules-card"><span class="architecture-number">03</span><small>DETERMINISTIC RULES</small><h3>안전 규칙 엔진</h3><p>기상 한계치와 검증된 규칙으로<br>판정하고 근거를 추적합니다.</p><span class="architecture-tag">판정 · 재현성</span></article></div>
+        <div class="safety-priority"><svg class="icon"><use href="#i-shield"/></svg><p><strong>기상특보·출입통제는 언제나 최우선.</strong><span>AI의 설명보다 안전 규칙이 먼저입니다.</span></p><span class="mono">SAFETY OVERRIDE</span></div>
+        <div class="pipeline"><div><p class="eyebrow">OPERATING FOUNDATION</p><h3>가동 중인 5종 공공데이터 파이프라인</h3><p>제공 PDF에 기재된 기존 운영 기반입니다.</p></div><div class="pipeline-items"><span>01 해상관측</span><span>02 조위관측</span><span>03 해상예보</span><span>04 선박운항지수</span><span>05 바다낚시지수</span></div></div>
+        <div class="pipeline-bottom"><span>수집</span><i>→</i><span>적재</span><i>→</i><span>분석·판정</span><i>→</i><span>콘텐츠 생성·검수</span><i>→</i><span>발행</span></div>
+        <p class="section-note on-dark">위 운영 기반은 제공 자료의 기술 현황이며, 이 웹페이지 자체는 데이터 수집이나 자동 발행을 실행하지 않습니다.</p>
+      </div>
+    </section>
+
+    <section class="section public-model" id="public-model">
+      <div class="container">
+        <div class="section-heading split-heading"><div><p class="eyebrow teal">05 / PUBLIC VALUE</p><h2>지자체가 도입하고,<br>국민은 무료로 이용합니다.</h2></div><p>정보 판매가 아닌 안전 인프라로.<br>지역의 사고 예방과 행정 효율을 함께 높이는<br>B2G 중심 사업 모델입니다.</p></div>
+        <div class="public-layout"><article class="public-promise"><svg class="icon"><use href="#i-shield"/></svg><small>FOR EVERYONE</small><h3>안전정보는<br>누구에게나.</h3><p>주민, 낚시객, 관광객을 위한<br>기본 안전정보 무료 제공 원칙.</p><span>PUBLIC SAFETY, PUBLIC ACCESS.</span></article><div class="public-services"><article><span>01</span><div><h3>지역 맞춤 구축 + 연간 운영</h3><p>위험지도·알림·제보관리·통계보고를 공통 플랫폼과 지역별 설정으로 제공합니다.</p></div></article><article><span>02</span><div><h3>현장과 데이터를 연결하는 확장 서비스</h3><p>지역 데이터 연계, 다국어, 현장 QR 안내, 안전캠페인과 기관용 API로 확장합니다.</p></div></article><article><span>03</span><div><h3>공공성과 지속가능성의 균형</h3><p>공공기관 구축·유지관리와 민간 콘텐츠 공급·구독 모델로 운영 기반을 다각화합니다.</p></div></article></div></div>
+        <div class="roadmap"><h3>작게 실증하고, 넓게 연결합니다.</h3><div><article><span class="roadmap-dot"></span><small>STEP 01</small><h4>부산·경남</h4><p>항포구·방파제·갯바위 실증</p></article><article><span class="roadmap-dot"></span><small>STEP 02</small><h4>남해안권</h4><p>유사 해안 지자체 공동 확산</p></article><article><span class="roadmap-dot"></span><small>STEP 03</small><h4>전국 연안</h4><p>권역별 지형·조석 모델 적용</p></article><article><span class="roadmap-dot"></span><small>STEP 04</small><h4>연안 여가활동</h4><p>해루질·서핑·갯벌체험으로 확장</p></article></div><p class="section-note">단계별 확산은 PDF의 사업화 계획이며 확정된 도입·계약 현황이 아닙니다.</p></div>
+      </div>
+    </section>
+
+    <section class="section faq-section" aria-labelledby="faq-title"><div class="container faq-layout"><div><p class="eyebrow teal">GOOD TO KNOW</p><h2 id="faq-title">궁금한 점을<br>먼저 확인하세요.</h2></div><div class="faq-list"><details><summary>지금 실제 안전판정을 받을 수 있나요?<span aria-hidden="true">+</span></summary><p>이 페이지는 서비스 소개와 화면 예시를 위한 정적 시안입니다. 실시간 데이터와 위험 판정은 연결하지 않았습니다. 출조 전에는 관계기관의 최신 기상특보·통제정보와 현장 상황을 반드시 확인하세요.</p></details><details><summary>기존 운영 기반과 새 기능은 어떻게 다른가요?<span aria-hidden="true">+</span></summary><p>제공 PDF에는 5종 공공데이터 수집·적재와 콘텐츠 발행 기반이 가동 중이라고 기재되어 있습니다. 개인화 알림, 체크인·아웃, 위험지도, 제보관리, 지자체 대시보드는 공공서비스 확장·실증 방향으로 소개합니다.</p></details><details><summary>문의하면 정보가 자동으로 전송되나요?<span aria-hidden="true">+</span></summary><p>아니요. 문의 버튼은 협력 검토 항목을 안내하는 창만 엽니다. 개인정보를 입력받거나 저장하지 않으며, 기관이나 운영자에게 메시지를 전송하지 않습니다.</p></details></div></div></section>
+
+    <section class="cta-section dark" id="contact"><div class="container"><div><p class="eyebrow">LET'S MAKE THE COAST SAFER</p><h2>우리 지역의 바다에,<br>한 걸음 앞선 안전을.</h2><p>연안 안전 실증, 지역 맞춤 데이터 연계, 공공 안전 콘텐츠.<br>오늘의낚시와 함께할 협력 방향을 살펴보세요.</p></div><button class="button primary" type="button" data-inquiry>공공 협력·도입 문의 <svg class="icon"><use href="#i-arrow"/></svg></button></div></section>
+  </main>
+
+  <footer><div class="container footer-top"><a class="brand" href="#top"><span class="brand-mark"><svg class="icon"><use href="#i-wave"/></svg></span><span data-brand>오늘의낚시</span></a><p>24시간 잠들지 않는 AI 연안 안전 에이전트</p><a class="back-top" href="#top">맨 위로 <span aria-hidden="true">↑</span></a></div><div class="container footer-bottom"><span>© 2026 오늘의낚시. 모바일 소개 시안 v1.0.0</span><button type="button" data-sources>자료 기준·이용 안내</button><span>미게시 · 실시간 서비스 미연결</span></div></footer>
+
+  <dialog id="image-dialog" class="image-dialog" aria-labelledby="image-dialog-title"><div class="image-dialog-bar"><h2 id="image-dialog-title">해양 브리핑 과거 예시</h2><button class="dialog-close" type="button" data-close-dialog aria-label="이미지 닫기">닫기 <span aria-hidden="true">×</span></button></div><img id="expanded-image" alt=""><p class="image-caption" id="image-caption"></p></dialog>
+  <dialog id="inquiry-dialog" class="info-dialog" aria-labelledby="inquiry-title"><button class="dialog-close" type="button" data-close-dialog aria-label="문의 안내 닫기">닫기 <span aria-hidden="true">×</span></button><p class="eyebrow teal">PUBLIC PARTNERSHIP</p><h2 id="inquiry-title" data-inquiry-title>우리 지역에 필요한 안전부터.</h2><p data-inquiry-description>협력 검토 시 아래 항목을 준비하면, 지역에 맞는 실증 방향을 구체화할 수 있습니다.</p><div class="inquiry-items"><span>도입 기관과 담당 부서</span><span>대상 지역·위험구역·이용자</span><span>필요 기능과 연계 데이터</span><span>실증 범위·운영 기간</span></div><div class="inquiry-note"><svg class="icon"><use href="#i-shield"/></svg><p>현재 문의 채널은 연결되지 않았습니다.<br>이 창에서는 정보를 입력·저장·전송하지 않습니다.</p></div><button class="button secondary full-width" type="button" data-close-dialog>안내 확인</button></dialog>
+  <dialog id="sources-dialog" class="info-dialog" aria-labelledby="sources-title"><button class="dialog-close" type="button" data-close-dialog aria-label="자료 안내 닫기">닫기 <span aria-hidden="true">×</span></button><p class="eyebrow teal">CONTENT & SAFETY</p><h2 id="sources-title">자료 기준·이용 안내</h2><p>주 내용은 제공 PDF 「24시간 잠들지 않는 AI 연안 안전 에이전트」의 5~9쪽에 담긴 B2G·공공 안전 방향을 기준으로 재구성했습니다. 기존 HTML과 공개 참고 페이지는 보조 자료로 사용했습니다.</p><p>기술 운영 현황은 자료 기재 기준이며 별도 실사 결과가 아닙니다. 기능 구상과 확산 계획은 현재 운영 기능과 구별하여 표시했습니다.</p><p>브리핑 이미지는 참고 사이트의 2026년 9월 과거 발행 예시입니다. 실제 안전판정이나 현재 기상정보로 사용하지 마세요.</p><p>이 소개 페이지는 긴급구조·안전보장 수단이 아닙니다. 현장 통제와 관계기관의 최신 공지를 우선 확인해야 합니다.</p><p>참고 출처: jaegyunkim.github.io/todaysfishing/claude.html<br>이 시안에서는 외부 사이트 이동을 연결하지 않았습니다.</p></dialog>
+</body>
+</html>
