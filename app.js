@@ -96,9 +96,37 @@ tabs.forEach((tab, index) => {
 
 const gallery = document.getElementById('briefing-grid');
 const categoryNames = { safety: '출조·안전', forecast: '지수·예보', observation: '실측·관측' };
-// 크론이 같은 파일명으로 이미지를 덮어쓰므로, 10분 단위 버전값으로 브라우저 캐시를 우회한다
-const imageVersion = Math.floor(Date.now() / 600000);
-const versioned = (src) => `${src}${src.includes('?') ? '&' : '?'}v=${imageVersion}`;
+// 크론이 같은 파일명으로 이미지를 덮어쓰므로, 서버 ETag를 버전값으로 붙여 갱신 즉시 캐시를 우회한다
+const IMAGE_CHECK_INTERVAL = 5 * 60 * 1000;
+const imageVersions = {};
+function versioned(src) {
+  const version = imageVersions[src] || Math.floor(Date.now() / 600000);
+  return `${src}${src.includes('?') ? '&' : '?'}v=${encodeURIComponent(version)}`;
+}
+async function refreshImageVersions() {
+  const sources = [...new Set((content?.briefings || []).map((item) => item.image))];
+  let changed = false;
+  await Promise.all(sources.map(async (src) => {
+    try {
+      const response = await fetch(src, { method: 'HEAD', cache: 'no-store' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const version = response.headers.get('etag') || response.headers.get('last-modified');
+      if (version && imageVersions[src] !== version) {
+        imageVersions[src] = version;
+        changed = true;
+      }
+    } catch (error) {
+      console.warn(`이미지 버전 확인 실패: ${src}`, error);
+    }
+  }));
+  return changed;
+}
+function applyImageVersions() {
+  gallery.querySelectorAll('img[data-src]').forEach((image) => { image.src = versioned(image.dataset.src); });
+}
+async function checkImageUpdates() {
+  if (await refreshImageVersions()) applyImageVersions();
+}
 function renderBriefings(filter = 'all') {
   gallery.replaceChildren();
   (content?.briefings || []).filter((item) => filter === 'all' || item.category === filter).forEach((item) => {
@@ -109,6 +137,7 @@ function renderBriefings(filter = 'all') {
     button.type = 'button';
     button.setAttribute('aria-label', `${item.title} 이미지 확대`);
     const image = document.createElement('img');
+    image.dataset.src = item.image;
     image.src = versioned(item.image);
     image.alt = item.alt;
     image.loading = 'lazy';
@@ -140,7 +169,12 @@ function renderBriefings(filter = 'all') {
     gallery.append(article);
   });
 }
-renderBriefings();
+// 첫 렌더 전에 버전을 받아 두어 같은 이미지를 두 번 내려받지 않게 한다
+refreshImageVersions().finally(() => renderBriefings());
+setInterval(checkImageUpdates, IMAGE_CHECK_INTERVAL);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') checkImageUpdates();
+});
 document.querySelectorAll('[data-filter]').forEach((button) => {
   button.addEventListener('click', () => {
     document.querySelectorAll('[data-filter]').forEach((node) => node.setAttribute('aria-pressed', String(node === button)));
