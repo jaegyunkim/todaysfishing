@@ -17,7 +17,7 @@ window.SITE_CONTENT = {
   },
   briefings: [
     {
-      image: 'assets/briefing-1.png',
+      image: '1.png',
       title: 'AI 출조 안전 판정',
       category: 'safety',
       date: '2026.09.14 · 과거 예시',
@@ -25,7 +25,7 @@ window.SITE_CONTENT = {
       alt: '동해 남부 갯바위 2026년 9월 14일 출조 안전 정보, 종합 32점 비추천인 과거 카드'
     },
     {
-      image: 'assets/briefing-2.png',
+      image: '2.png',
       title: '바다낚시 기상 리포트',
       category: 'safety',
       date: '2026.09.08 · 과거 예시',
@@ -33,7 +33,7 @@ window.SITE_CONTENT = {
       alt: '남애항 양양 2026년 9월 8일 09시 바다낚시 기상 리포트 과거 카드'
     },
     {
-      image: 'assets/briefing-3.png',
+      image: '3.png',
       title: '바다낚시 지수 예측',
       category: 'forecast',
       date: '2026.09.11 · 과거 예시',
@@ -41,7 +41,7 @@ window.SITE_CONTENT = {
       alt: '울릉도 갯바위 2026년 9월 11일 바다낚시 지수 보통인 과거 예측 카드'
     },
     {
-      image: 'assets/briefing-4.png',
+      image: '4.png',
       title: '전국 해상 날씨 예보',
       category: 'forecast',
       date: '2026.09.12 · 과거 예시',
@@ -49,7 +49,7 @@ window.SITE_CONTENT = {
       alt: '2026년 9월 12일 전국 9개 해상 권역의 날씨와 파고 과거 예보 카드'
     },
     {
-      image: 'assets/briefing-5.png',
+      image: '5.png',
       title: '해양관측소 실측 브리핑',
       category: 'observation',
       date: '2026.09.07 · 과거 예시',
@@ -57,7 +57,7 @@ window.SITE_CONTENT = {
       alt: '군산항 서해남부 2026년 9월 7일 06시 해양관측소 실측 과거 카드'
     },
     {
-      image: 'assets/briefing-6.png',
+      image: '6.png',
       title: '실측·예측 조위 비교',
       category: 'observation',
       date: '2026.09.09 · 과거 예시',

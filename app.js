@@ -96,6 +96,9 @@ tabs.forEach((tab, index) => {
 
 const gallery = document.getElementById('briefing-grid');
 const categoryNames = { safety: '출조·안전', forecast: '지수·예보', observation: '실측·관측' };
+// 크론이 같은 파일명으로 이미지를 덮어쓰므로, 10분 단위 버전값으로 브라우저 캐시를 우회한다
+const imageVersion = Math.floor(Date.now() / 600000);
+const versioned = (src) => `${src}${src.includes('?') ? '&' : '?'}v=${imageVersion}`;
 function renderBriefings(filter = 'all') {
   gallery.replaceChildren();
   (content?.briefings || []).filter((item) => filter === 'all' || item.category === filter).forEach((item) => {
@@ -106,7 +109,7 @@ function renderBriefings(filter = 'all') {
     button.type = 'button';
     button.setAttribute('aria-label', `${item.title} 이미지 확대`);
     const image = document.createElement('img');
-    image.src = item.image;
+    image.src = versioned(item.image);
     image.alt = item.alt;
     image.loading = 'lazy';
     const expand = document.createElement('span');
@@ -115,7 +118,7 @@ function renderBriefings(filter = 'all') {
     button.append(image, expand);
     button.addEventListener('click', () => {
       const expanded = document.getElementById('expanded-image');
-      expanded.src = item.image;
+      expanded.src = versioned(item.image);
       expanded.alt = item.alt;
       bindText('#image-dialog-title', item.title);
       bindText('#image-caption', `${item.date} · 현재 안전판정에 사용하지 마세요.`);
