@@ -20,7 +20,7 @@ window.SITE_CONTENT = {
       image: '1.png',
       title: 'AI 출조 안전 판정',
       category: 'safety',
-      date: '2026.09.14 · 과거 예시',
+      date: ' ',
       description: '낚시지수·물때·기상특보를 모아, 출조 판정과 그 근거를 한 장으로.',
       alt: '동해 남부 갯바위 2026년 9월 14일 출조 안전 정보, 종합 32점 비추천인 과거 카드'
     },

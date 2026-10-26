@@ -1,3 +1,3 @@
 git add .
-git commit -am "all change "
+git commit -am "modify claude.html"
 git push --set-upstream origin main
