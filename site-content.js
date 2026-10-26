@@ -28,7 +28,7 @@ window.SITE_CONTENT = {
       image: '2.png',
       title: '바다낚시 기상 리포트',
       category: 'safety',
-      date: '2026.09.08 · 과거 예시',
+      date: ' ',
       description: '풍향·풍속·파고를 낚시 현장의 언어와 캐스팅 가이드로 풀어냅니다.',
       alt: '남애항 양양 2026년 9월 8일 09시 바다낚시 기상 리포트 과거 카드'
     },
@@ -36,7 +36,7 @@ window.SITE_CONTENT = {
       image: '3.png',
       title: '바다낚시 지수 예측',
       category: 'forecast',
-      date: '2026.09.11 · 과거 예시',
+      date: ' ',
       description: '물때·파고·수온·유속과 대상어종 정보를 한눈에 비교합니다.',
       alt: '울릉도 갯바위 2026년 9월 11일 바다낚시 지수 보통인 과거 예측 카드'
     },
@@ -44,7 +44,7 @@ window.SITE_CONTENT = {
       image: '4.png',
       title: '전국 해상 날씨 예보',
       category: 'forecast',
-      date: '2026.09.12 · 과거 예시',
+      date: ' ',
       description: '전국 해상 권역의 오전·오후 하늘상태와 파고를 지도 위에 담습니다.',
       alt: '2026년 9월 12일 전국 9개 해상 권역의 날씨와 파고 과거 예보 카드'
     },
@@ -52,7 +52,7 @@ window.SITE_CONTENT = {
       image: '5.png',
       title: '해양관측소 실측 브리핑',
       category: 'observation',
-      date: '2026.09.07 · 과거 예시',
+      date: ' ',
       description: '수온·염분·유속·바람 등 제공되는 원시 관측값을 있는 그대로.',
       alt: '군산항 서해남부 2026년 9월 7일 06시 해양관측소 실측 과거 카드'
     },
@@ -60,7 +60,7 @@ window.SITE_CONTENT = {
       image: '6.png',
       title: '실측·예측 조위 비교',
       category: 'observation',
-      date: '2026.09.09 · 과거 예시',
+      date: ' ',
       description: '시간대별 실측과 예측 조위를 나란히 비교해 물때를 이해합니다.',
       alt: '영광 2026년 9월 9일 시간대별 실측 조위와 예측 조위를 비교한 과거 카드'
     }
