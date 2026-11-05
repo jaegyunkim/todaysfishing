@@ -192,3 +192,12 @@ document.querySelectorAll('dialog').forEach((dialog) => {
     if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) dialog.close();
   });
 });
+
+const videoDialog = document.getElementById('video-dialog');
+const introVideo = document.getElementById('intro-video');
+document.querySelectorAll('[data-video-open]').forEach((link) => link.addEventListener('click', (event) => {
+  event.preventDefault();
+  videoDialog.showModal();
+  introVideo.play().catch(() => {});
+}));
+videoDialog.addEventListener('close', () => introVideo.pause());

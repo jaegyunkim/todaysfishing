@@ -8,9 +8,9 @@
   <meta name="description" content="공공데이터를 이해하기 쉬운 연안 안전정보로. 오늘의낚시 AI 연안 안전 에이전트의 기술과 공공 협력 모델을 소개합니다.">
   <title>오늘의낚시 — 24시간 잠들지 않는 AI 연안 안전 에이전트</title>
   <link rel="icon" href="https://jaegyunkim.github.io/todaysfishing/assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20261106-1">
   <script src="site-content.js?v=20261023" defer=""></script>
-  <script src="app.js?v=20261023-2" defer=""></script>
+  <script src="app.js?v=20261106-1" defer=""></script>
 </head>
 <body>
   <a class="skip-link" href="https://jaegyunkim.github.io/todaysfishing/claude.html#main">본문 바로가기</a>
@@ -36,7 +36,7 @@
     <div class="container nav-row">
       <a class="brand" href="https://jaegyunkim.github.io/todaysfishing/claude.html#top" aria-label="오늘의낚시 첫 화면"><span class="brand-mark"><svg class="icon"><use href="#i-wave"></use></svg></span><span data-brand="">오늘의낚시</span><span class="brand-tag">COASTAL SAFETY</span></a>
       <nav class="navigation" id="navigation" aria-label="주 내비게이션">
-        <a href="https://jaegyunkim.github.io/todaysfishing/claude.html#solution">서비스 소개</a><a href="https://jaegyunkim.github.io/todaysfishing/claude.html#features">핵심 기능</a><a href="https://jaegyunkim.github.io/todaysfishing/claude.html#technology">기술 구조</a><a href="https://jaegyunkim.github.io/todaysfishing/claude.html#public-model">공공 협력</a><a href="privacy.html">개인정보처리방침</a>
+        <a href="https://jaegyunkim.github.io/todaysfishing/claude.html#solution">서비스 소개</a><a href="https://jaegyunkim.github.io/todaysfishing/claude.html#features">핵심 기능</a><a href="https://jaegyunkim.github.io/todaysfishing/claude.html#technology">기술 구조</a><a href="https://jaegyunkim.github.io/todaysfishing/claude.html#public-model">공공 협력</a><a href="privacy.html">개인정보처리방침</a><a href="#video" data-video-open="">소개영상</a>
         <button class="nav-cta" type="button" data-inquiry="">도입 문의 <span aria-hidden="true">↗</span></button>
       </nav>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="navigation" aria-label="메뉴 열기"><span></span><span></span></button>
@@ -143,6 +143,7 @@
   <footer><div class="container footer-top"><a class="brand" href="https://jaegyunkim.github.io/todaysfishing/claude.html#top"><span class="brand-mark"><svg class="icon"><use href="#i-wave"></use></svg></span><span data-brand="">오늘의낚시</span></a><p>24시간 잠들지 않는 AI 연안 안전 에이전트</p><a class="back-top" href="https://jaegyunkim.github.io/todaysfishing/claude.html#top">맨 위로 <span aria-hidden="true">↑</span></a></div><div class="container footer-bottom"><span>© 2026 오늘의낚시. 모바일 소개 시안 v1.0.0</span><button type="button" data-sources="">자료 기준·이용 안내</button><span>미게시 · 실시간 서비스 미연결</span></div></footer>
 
   <dialog id="image-dialog" class="image-dialog" aria-labelledby="image-dialog-title"><div class="image-dialog-bar"><h2 id="image-dialog-title">해양 브리핑 과거 예시</h2><button class="dialog-close" type="button" data-close-dialog="" aria-label="이미지 닫기">닫기 <span aria-hidden="true">×</span></button></div><img id="expanded-image" alt=""><p class="image-caption" id="image-caption"></p></dialog>
+  <dialog id="video-dialog" class="video-dialog" aria-labelledby="video-dialog-title"><div class="image-dialog-bar"><h2 id="video-dialog-title">소개영상</h2><button class="dialog-close" type="button" data-close-dialog="" aria-label="영상 닫기">닫기 <span aria-hidden="true">×</span></button></div><video id="intro-video" controls playsinline preload="none" src="video_todaysfishing.mp4"></video></dialog>
   <dialog id="inquiry-dialog" class="info-dialog" aria-labelledby="inquiry-title"><button class="dialog-close" type="button" data-close-dialog="" aria-label="문의 안내 닫기">닫기 <span aria-hidden="true">×</span></button><p class="eyebrow teal">PUBLIC PARTNERSHIP</p><h2 id="inquiry-title" data-inquiry-title="">우리 지역에 필요한 안전부터.</h2><p data-inquiry-description="">협력 검토 시 아래 항목을 준비하면, 지역에 맞는 실증 방향을 구체화할 수 있습니다.</p><div class="inquiry-items"><span>도입 기관과 담당 부서</span><span>대상 지역·위험구역·이용자</span><span>필요 기능과 연계 데이터</span><span>실증 범위·운영 기간</span></div><div class="inquiry-note"><svg class="icon"><use href="#i-shield"></use></svg><p>현재 문의 채널은 연결되지 않았습니다.<br>이 창에서는 정보를 입력·저장·전송하지 않습니다.</p></div><button class="button secondary full-width" type="button" data-close-dialog="">안내 확인</button></dialog>
   <dialog id="sources-dialog" class="info-dialog" aria-labelledby="sources-title"><button class="dialog-close" type="button" data-close-dialog="" aria-label="자료 안내 닫기">닫기 <span aria-hidden="true">×</span></button><p class="eyebrow teal">CONTENT &amp; SAFETY</p><h2 id="sources-title">자료 기준·이용 안내</h2><p>주 내용은 제공 PDF 「24시간 잠들지 않는 AI 연안 안전 에이전트」의 5~9쪽에 담긴 B2G·공공 안전 방향을 기준으로 재구성했습니다. 기존 HTML과 공개 참고 페이지는 보조 자료로 사용했습니다.</p><p>기술 운영 현황은 자료 기재 기준이며 별도 실사 결과가 아닙니다. 기능 구상과 확산 계획은 현재 운영 기능과 구별하여 표시했습니다.</p><p>브리핑 이미지는 참고 사이트의 2026년 9월 과거 발행 예시입니다. 실제 안전판정이나 현재 기상정보로 사용하지 마세요.</p><p>이 소개 페이지는 긴급구조·안전보장 수단이 아닙니다. 현장 통제와 관계기관의 최신 공지를 우선 확인해야 합니다.</p><p>참고 출처: jaegyunkim.github.io/todaysfishing/claude.html<br>이 시안에서는 외부 사이트 이동을 연결하지 않았습니다.</p></dialog>
 
